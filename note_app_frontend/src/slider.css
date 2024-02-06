@@ -1,0 +1,26 @@
+
+
+.gutter {
+    background-color: #373736;
+
+    /* background-repeat: no-repeat; */
+    /* background-position: 50%; */
+}
+
+.gutter.gutter-horizontal {
+    /* background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg=='); */
+    width: 2px !important;
+}
+.gutter.gutter-horizontal:hover {
+    background-color: #885af3;
+
+}
+
+.gutter.gutter-horizontal:hover {
+    cursor: col-resize;
+}
+
+.split {
+    display: flex;
+}
+

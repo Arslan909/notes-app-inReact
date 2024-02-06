@@ -1,0 +1,39 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+
+/* editor side css */
+.editor-side{
+    height: 100vh;
+    /* border: 2px solid blue; */
+    background-color: #1f1f1e;
+    color: #dbdbda;
+}
+.text-area{
+    width: 99%;
+    height: 95%;
+    background-color:  #1f1f1e;
+    color: #dbdbda;
+    font-size: 40px;
+    border: none;
+}
+
+
+
+
+/* side bar css */
+.side-bar{
+    height: 100vh;
+    /* border: 2px solid rgb(192, 17, 17); */
+    background-color: #262727;
+    color: #dbdbda;
+}
+.side-bar-options{
+    font-size: 25px;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+
+}
