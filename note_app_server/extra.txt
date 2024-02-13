@@ -1,0 +1,15 @@
+# User model
+# class User(UserMixin):
+#     def __init__(self, user_id, username):
+#         self.id = user_id
+#         self.username = username
+
+# @login_manager.user_loader
+# def load_user(user_id):
+#     cur = mysql.connection.cursor()
+#     cur.execute("SELECT userId, username FROM Login WHERE userId = %s", (user_id,))
+#     user_data = cur.fetchone()
+#     if user_data:
+#         user = User(user_data[0], user_data[1])
+#         return user
+#     return None
