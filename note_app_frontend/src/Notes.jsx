@@ -11,12 +11,11 @@ export default function App() {
 	const [noteData, setNoteData] = React.useState(null)
 	const [selectedNote, setSelectedNote] = React.useState(null)
 	const [noteDescription, setNoteDescription] = React.useState(null)
+	const [noteTitle, setNoteTile] = React.useState(null)
 	const [isNewNote, setIsNewNote] = React.useState(false)
 	const [refreshNoteData, setRefreshNoteData] = React.useState(false)
 
 	React.useEffect(() => {          // this will fetch all the notes present in the database 
-		// const temp = localStorage.getItem('userId')
-		// console.log(temp);
 		async function getNotes() {
 			const response = await fetch("http://127.0.0.1:5000/getNotes",{
 				method: 'POST',
@@ -39,6 +38,7 @@ export default function App() {
 		if (selectedNote) {
 			noteData.map((note) => {
 				if (note[0] === selectedNote) {
+					setNoteTile(note[1])
 					setNoteDescription(note[2])
 				}
 			})
@@ -87,9 +87,10 @@ export default function App() {
 					setRefreshNoteData={setRefreshNoteData}
 				/>
 
-
 				<Editor
 					noteDescription={noteDescription}
+					setNoteDescription = {setNoteDescription}
+					noteTitle={noteTitle}
 				/>
 
 			</Split>

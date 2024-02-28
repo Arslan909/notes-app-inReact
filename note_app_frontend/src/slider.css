@@ -1,5 +1,4 @@
 
-
 .gutter {
     background-color: #373736;
 
@@ -22,5 +21,6 @@
 
 .split {
     display: flex;
+    width: 100vw;
 }
 

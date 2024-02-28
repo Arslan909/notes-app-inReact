@@ -1,0 +1,179 @@
+/* editor side css */
+.editor-side {
+    height: 100vh;
+    /* border: 2px solid blue; */
+    background-color: #1f1f1e;
+    color: #dbdbda;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    /* background-color: blueviolet; */
+}
+
+.editor-side-master-container{
+    width: 100%;
+}
+
+.note-pad-textarea {
+    margin-top: 30px;
+    width: 70%;
+    min-height: 82%;
+    max-height: 82%;
+    background-color: #1f1f1e;
+    border: none;
+    font-size: 1.5rem;
+    color: #dbdbda;
+    overflow-y: auto;
+
+    overflow-x: auto; 
+    white-space: pre-wrap;
+}
+
+.note-pad-textarea::-webkit-scrollbar {
+    width: 5px; 
+}
+
+.note-pad-textarea::-webkit-scrollbar-thumb {
+    background-color: #333;
+    border-radius: 4px; 
+}
+
+.note-pad-textarea::-webkit-scrollbar-track {
+    background-color: #1f1f1e;
+}
+
+.note-pad-textarea:focus{
+    outline: none;
+}
+
+.note-pad-viewarea{
+    margin-top: 30px;
+    width: 70%;
+    min-height: 82%;
+    max-height: 82%;
+    background-color: #1f1f1e;
+    border: none;
+    font-size: 1.5rem;
+    color: #dbdbda;
+
+    overflow-y: auto;
+    white-space: pre-wrap; 
+    word-wrap: break-word;
+
+}
+
+.note-pad-viewarea::-webkit-scrollbar {
+    width: 5px; 
+}
+
+.note-pad-viewarea::-webkit-scrollbar-thumb {
+    background-color: #333;
+    border-radius: 4px; 
+}
+
+.note-pad-viewarea::-webkit-scrollbar-track {
+    background-color: #1f1f1e;
+}
+
+.note-pad-viewarea:focus{
+    outline: none;
+}
+
+
+.note-pad-head{
+    display: flex;
+    width: 60%;
+    justify-content: space-between;
+    /* border: 2px solid blue; */
+    /* background-color: blueviolet; */
+    margin-top: 10px;
+    margin-right: 30px;
+    align-self: flex-end;
+}
+
+
+.note-heading{
+    font-size: 1rem;
+    color: #dbdbda;
+    font-weight: 100;
+    font-family: 'Gothic A1', sans-serif;
+}
+
+.notepad-view-icon{
+    font-size: 1rem;
+    color: #dbdbda;
+    font-weight: 100;
+    
+}
+
+.notepad-view-btn{
+    background-color: #1f1f1e;
+    border: 1px solid #1f1f1e;
+    border-radius: 5px;
+    padding: 4px;
+}
+.notepad-view-btn:focus{
+    outline: none;
+}
+.notepad-view-btn:hover{
+    background-color: #404040;
+}
+
+
+
+
+/* editor nav css */
+
+  .editor-nav {
+    background-color: #363737;
+    /* border-bottom: 1px solid #363737; */
+    display: flex;
+    overflow-x: auto;
+    padding: 5px 5px 0 5px;
+  }
+  
+  .editor-tab {
+    background-color: #1f1f1e;
+    padding: 5px 15px;
+    /* margin-right: 25px; */
+    border-radius: 5px 5px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 200px;
+  }
+  
+  .editor-tab li {
+    list-style: none;
+    color: #dbdbda;
+    font-size: 1rem;
+
+  }
+  
+  .editor-tab button {
+    background-color: transparent;
+    border-radius: 4px;
+    border-color: transparent;
+    cursor: pointer;
+    margin-left: 10px;
+    color: #dbdbda;
+    padding: 5px;
+
+  }
+  
+  .editor-tab button:hover {
+    background-color: #363737;
+  }
+  
+  .editor-tab button:focus {
+    outline: none;
+  }
+  
+  /* Optional: Highlight active tab */
+  .editor-tab.active {
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+  }
+
+  

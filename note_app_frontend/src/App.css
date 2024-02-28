@@ -1,39 +1,94 @@
 *{
     padding: 0;
     margin: 0;
+    overflow-y: hidden;
 }
-
-
-/* editor side css */
-.editor-side{
-    height: 100vh;
-    /* border: 2px solid blue; */
-    background-color: #1f1f1e;
-    color: #dbdbda;
-}
-.text-area{
-    width: 99%;
-    height: 95%;
-    background-color:  #1f1f1e;
-    color: #dbdbda;
-    font-size: 40px;
-    border: none;
-}
-
-
 
 
 /* side bar css */
 .side-bar{
-    height: 100vh;
+    /* height: 100vh; */
     /* border: 2px solid rgb(192, 17, 17); */
     background-color: #262727;
     color: #dbdbda;
 }
+
 .side-bar-options{
-    font-size: 25px;
     display: flex;
     justify-content: center;
-    padding: 20px;
+    padding: 10px;
+    margin-top: 10px;
+    /* background-color: blueviolet; */
 
+}
+.side-bar-options-btn{
+    background-color: #262727;
+    border: 1px solid #262727;
+    border-radius: 5px;
+    padding: 8px;
+    /* margin-right: 5px; */
+}
+.side-bar-options-btn:hover{
+    background-color: #1f1f1e;
+}
+
+.new-folder-icon,
+.new-note-icon{
+    font-size: 1.1rem;
+    color: #dbdbda;
+    font-weight: 100;
+}
+
+
+
+
+.note-li{
+    list-style-type: none;
+}
+
+.note-cont{
+
+    margin-bottom: 10px;
+    display: flex;
+    text-indent: 20px;
+    justify-content: space-between;
+    padding: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+.note-cont:focus{
+    background-color: #363737;
+}
+.note-cont:hover{
+    background-color: #363737;
+    .note-del-btn{
+        display: block;
+    }
+
+}
+
+.note-del-btn{
+    background-color: #363737;
+    border: 1px solid #363737;
+    border-radius: 5px;
+    padding: 5px;
+    margin-right: 20px;
+    display: none;
+}
+.note-del-btn:hover{
+    background-color: #1f1f1e;
+}
+.delete-icon{
+    font-size: 0.8rem;
+    color: #dbdbda;
+    font-weight: 100;
+}
+
+
+.note-title-cont{
+    font-family: 'Gothic A1', sans-serif;
+    /* font-weight: 600; */
+    font-size: 1rem;
+    text-overflow:ellipsis;
 }

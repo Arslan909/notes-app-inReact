@@ -10,11 +10,12 @@ export default function Sidebar(props) {
     if (props.noteData != null) {
         noteList = props.noteData.map((note) => {
             return (
-                <div key={note[0]} className='note-cont'>
-                    <div onClick={() => selectNote(note[0])} className='note-title-cont'>
-                        <li>{note[1]} </li>
+                <div key={note[0]} className='note-cont' tabIndex={0} onClick={() => selectNote(note[0])}>
+
+                    <div  className='note-title-cont'>
+                        <li className='note-li'>{note[1]} </li>
                     </div>
-                    <button className='note-del-btn' onClick={() => deleteNote(note[0])}>delete</button>
+                    <button className='note-del-btn' onClick={() => deleteNote(note[0])}><i className='nf nf-md-delete_outline delete-icon'></i></button>
 
                 </div>
             )
@@ -51,9 +52,24 @@ export default function Sidebar(props) {
 
     return (
         <div className="side-bar">
+            
             <header className="side-bar-options">
-                <i className="nf nf-md-file_plus_outline" onClick={setNewNote}></i>
-                <i className="nf nf-md-folder_multiple_plus_outline"></i>
+                <button className='side-bar-options-btn'>
+                    <i className="nf nf-md-file_plus_outline new-note-icon" onClick={setNewNote}></i>
+
+                </button>
+                <button className='side-bar-options-btn'>
+                    <i className="nf nf-md-folder_multiple_plus_outline new-folder-icon"></i>
+
+                </button>
+                <button className='side-bar-options-btn'>
+                    <i className="nf nf-md-sort new-folder-icon"></i>
+
+                </button>
+                <button className='side-bar-options-btn'>
+                    <i className="nf nf-md-arrow_expand new-folder-icon"></i>
+
+                </button>
             </header>
 
             <div className="notes-list">
@@ -64,6 +80,8 @@ export default function Sidebar(props) {
 
     )
 }
+
+
 
 
 Sidebar.propTypes = {
