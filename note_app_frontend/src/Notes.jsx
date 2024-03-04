@@ -14,6 +14,8 @@ export default function App() {
 	const [noteTitle, setNoteTile] = React.useState(null)
 	const [isNewNote, setIsNewNote] = React.useState(false)
 	const [refreshNoteData, setRefreshNoteData] = React.useState(false)
+	
+	const [noteId, setNoteId] = React.useState(null)
 
 	React.useEffect(() => {          // this will fetch all the notes present in the database 
 		async function getNotes() {
@@ -38,6 +40,7 @@ export default function App() {
 		if (selectedNote) {
 			noteData.map((note) => {
 				if (note[0] === selectedNote) {
+					setNoteId(note[0])
 					setNoteTile(note[1])
 					setNoteDescription(note[2])
 				}
@@ -91,6 +94,8 @@ export default function App() {
 					noteDescription={noteDescription}
 					setNoteDescription = {setNoteDescription}
 					noteTitle={noteTitle}
+					noteId={noteId}
+					setNoteId={setNoteId}
 				/>
 
 			</Split>
