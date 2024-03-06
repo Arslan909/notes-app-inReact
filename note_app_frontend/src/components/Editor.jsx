@@ -5,46 +5,49 @@ import "../editor.css";
 
 export default function Editor(props) {
     const [notePadView, setNotePadView] = React.useState(true);
-    const [tabs, setTabs] = React.useState([]);
+
+    const [tabs, setTabs] = React.useState([])
+    const [EditorData, setEditorData] = React.useState({
+        editorTitle: "",
+        editorContent: ""
+    })
 
     const [selectedTab, setSelectedTab] = React.useState(null)
 
-    React.useEffect(() => {
-        if (tabs.length === 0) {
-            newTab()
-        }
-    }, [])
+    if (tabs.length === 0) {
+        newTab()
+    }
 
     React.useEffect(() => {
 
         if (props.noteId !== null) {
             let updatedTabs = [...tabs]
-
             updatedTabs.map(tab => {
                 if (tab.id === selectedTab) {
-                    tab.id = props.noteId
+                    tab.noteID = props.noteId
                     tab.title = props.noteTitle
                     tab.content = props.noteDescription
                 }
-                setSelectedTab(tab.id)
-                console.log(`working`);
-                console.log(tab);
+                // setSelectedTab(tab.id)
+
             })
             setTabs(updatedTabs)
         }
 
     }, [props.noteId])
 
-    // console.log(selectedTab);
+
     function newTab() {
         let newTab = {
             id: tabs.length + 1,
             title: "New Tab",
-            content: ''
+            content: '',
+            noteID: null
         }
         setTabs([...tabs, newTab])
         setSelectedTab(newTab.id)
         props.setNoteId(null)
+        props.setSelectedNote(null)
 
     }
 
@@ -57,12 +60,21 @@ export default function Editor(props) {
     }
 
     function closeTab(tabId) {
+        // setSelectedTab(1)
         const updatedTabs = tabs.filter(tab => tab.id !== tabId);
         setTabs(updatedTabs);
     }
+    console.log(tabs);
+    
+    React.useEffect(()=>{
+    },[tabs])
+    console.log(selectedTab);
 
     const editorTab = tabs.map(tab => (
-        <div className='editor-tab' key={tab.id} onClick={() => { setSelectedTab(tab.id) }}>
+        <div
+            className={tab.id === selectedTab ? 'selected-editor-tab' : 'editor-tab'}
+            key={tab.id}
+            onClick={() => { setSelectedTab(tab.id) }}>
 
             <li>{tab.title}</li>
             <button onClick={() => closeTab(tab.id)}> X </button>
@@ -71,32 +83,53 @@ export default function Editor(props) {
     ));
 
 
+
+
+
+    React.useEffect(() => {
+        tabs.map(tab => {
+            if (tab.id === selectedTab) {
+                setEditorData({
+                    editorTitle: tab.title,
+                    editorContent: tab.content
+                })
+            }
+        })
+
+    }, [selectedTab, props.noteId])
+
+
     return (
         <>
             <div className="editor-side-master-container">
                 <div className="editor-nav">
                     {editorTab}
-                    <button onClick={() => { newTab() }}>+</button>
+                    <button className="new-tab" onClick={() => { newTab() }}>+</button>
                 </div>
 
                 <div className="editor-side">
                     <div className="note-pad-head">
-                        <h3 className='note-heading'>{props.noteTitle}</h3>
+
+                        <h3 className='note-heading'>
+                            {EditorData.editorTitle}
+                        </h3>
+
+
                         <button onClick={chnageView} className='notepad-view-btn'>
                             {notePadView ? <i className='nf nf-oct-book notepad-view-icon'></i> : <i className='nf nf-fa-edit notepad-view-icon'></i>}
                         </button>
                     </div>
 
-                    {props.noteDescription !== null ?
+                    {EditorData.editorContent !== "" ?
                         <>
                             {notePadView ?
                                 <textarea
-                                    value={props.noteDescription}
+                                    value={EditorData.editorContent}
                                     className='note-pad-textarea'
                                     onChange={handelChange}
                                     name="note-pad-textarea"
                                 ></textarea> :
-                                <ReactMarkdown className="note-pad-viewarea">{props.noteDescription}</ReactMarkdown>
+                                <ReactMarkdown className="note-pad-viewarea">{EditorData.editorContent}</ReactMarkdown>
                             }
                         </> :
                         <div className='note-pad-textarea'><p>create new note</p> <p>open a note</p> </div>
@@ -113,10 +146,11 @@ Editor.propTypes = {
     setNoteDescription: PropTypes.func,
     noteId: PropTypes.number,
     setNoteId: PropTypes.func,
+    setSelectedNote: PropTypes.func,
 };
 
 
 // TODO- 
-//check which tab is selected then set the title of selected tab equal tot the selected note
-// and render the text of text area according to that title description which will also be set-
-// -as content of that tab so we gotta use that content to render text of text area according to selected tab also
+// fix the selected tab when a tab is closed(select the very previous opened tab)
+// fix to tab selected at the same this issue(some time color of the both opened tab is like selected tab)
+// fix closing of multiple tabs opened

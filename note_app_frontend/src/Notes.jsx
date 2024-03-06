@@ -9,24 +9,28 @@ import './slider.css'
 export default function App() {
 
 	const [noteData, setNoteData] = React.useState(null)
-	const [selectedNote, setSelectedNote] = React.useState(null)
 	const [noteDescription, setNoteDescription] = React.useState(null)
 	const [noteTitle, setNoteTile] = React.useState(null)
 	const [isNewNote, setIsNewNote] = React.useState(false)
 	const [refreshNoteData, setRefreshNoteData] = React.useState(false)
-	
+	const [selectedNote, setSelectedNote] = React.useState(null)
+	const [selectedFolderNote, setSelectedFolderNote] = React.useState(null)
+
 	const [noteId, setNoteId] = React.useState(null)
+
+	const [folders, setFolder] = React.useState([])
+
 
 	React.useEffect(() => {          // this will fetch all the notes present in the database 
 		async function getNotes() {
-			const response = await fetch("http://127.0.0.1:5000/getNotes",{
+			const response = await fetch("http://127.0.0.1:5000/getNotes", {
 				method: 'POST',
 				headers: {
 					'Content-type': 'application/json; charset=UTF-8',
 				}
 			})
 			const data = await response.json()
-			
+
 			setNoteData(data.notes);
 			setRefreshNoteData(false)
 
@@ -46,8 +50,19 @@ export default function App() {
 				}
 			})
 		}
+		else if (selectedFolderNote) {
+			folders.map(folder => {
+				folder.folderNotes.map(ele => {
+					if (ele.noteId === selectedFolderNote) {
+						setNoteId(ele.noteId)
+						setNoteTile(ele.noteName)
+						setNoteDescription(ele.note)
+					}
+				})
+			})
+		}
 
-	}, [selectedNote, noteData])
+	}, [selectedNote, noteData, selectedFolderNote])
 
 
 
@@ -75,6 +90,7 @@ export default function App() {
 
 
 	}, [isNewNote])
+	//todo- fix the new note is creating array not function!
 
 
 
@@ -88,14 +104,19 @@ export default function App() {
 					setSelectedNote={setSelectedNote}
 					setIsNewNote={setIsNewNote}
 					setRefreshNoteData={setRefreshNoteData}
+					setSelectedFolderNote={setSelectedFolderNote}
+					setFolder={setFolder}
+					folders={folders}
+
 				/>
 
 				<Editor
 					noteDescription={noteDescription}
-					setNoteDescription = {setNoteDescription}
+					setNoteDescription={setNoteDescription}
 					noteTitle={noteTitle}
 					noteId={noteId}
 					setNoteId={setNoteId}
+					setSelectedNote={setSelectedNote}
 				/>
 
 			</Split>

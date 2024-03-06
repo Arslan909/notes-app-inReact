@@ -11,7 +11,7 @@
     /* background-color: blueviolet; */
 }
 
-.editor-side-master-container{
+.editor-side-master-container {
     width: 100%;
 }
 
@@ -26,28 +26,28 @@
     color: #dbdbda;
     overflow-y: auto;
 
-    overflow-x: auto; 
+    overflow-x: auto;
     white-space: pre-wrap;
 }
 
 .note-pad-textarea::-webkit-scrollbar {
-    width: 5px; 
+    width: 5px;
 }
 
 .note-pad-textarea::-webkit-scrollbar-thumb {
     background-color: #333;
-    border-radius: 4px; 
+    border-radius: 4px;
 }
 
 .note-pad-textarea::-webkit-scrollbar-track {
     background-color: #1f1f1e;
 }
 
-.note-pad-textarea:focus{
+.note-pad-textarea:focus {
     outline: none;
 }
 
-.note-pad-viewarea{
+.note-pad-viewarea {
     margin-top: 30px;
     width: 70%;
     min-height: 82%;
@@ -58,30 +58,30 @@
     color: #dbdbda;
 
     overflow-y: auto;
-    white-space: pre-wrap; 
+    white-space: pre-wrap;
     word-wrap: break-word;
 
 }
 
 .note-pad-viewarea::-webkit-scrollbar {
-    width: 5px; 
+    width: 5px;
 }
 
 .note-pad-viewarea::-webkit-scrollbar-thumb {
     background-color: #333;
-    border-radius: 4px; 
+    border-radius: 4px;
 }
 
 .note-pad-viewarea::-webkit-scrollbar-track {
     background-color: #1f1f1e;
 }
 
-.note-pad-viewarea:focus{
+.note-pad-viewarea:focus {
     outline: none;
 }
 
 
-.note-pad-head{
+.note-pad-head {
     display: flex;
     width: 60%;
     justify-content: space-between;
@@ -93,30 +93,32 @@
 }
 
 
-.note-heading{
+.note-heading {
     font-size: 1rem;
     color: #dbdbda;
     font-weight: 100;
     font-family: 'Gothic A1', sans-serif;
 }
 
-.notepad-view-icon{
+.notepad-view-icon {
     font-size: 1rem;
     color: #dbdbda;
     font-weight: 100;
-    
+
 }
 
-.notepad-view-btn{
+.notepad-view-btn {
     background-color: #1f1f1e;
     border: 1px solid #1f1f1e;
     border-radius: 5px;
     padding: 4px;
 }
-.notepad-view-btn:focus{
+
+.notepad-view-btn:focus {
     outline: none;
 }
-.notepad-view-btn:hover{
+
+.notepad-view-btn:hover {
     background-color: #404040;
 }
 
@@ -125,33 +127,79 @@
 
 /* editor nav css */
 
-  .editor-nav {
+.editor-nav {
     background-color: #363737;
     /* border-bottom: 1px solid #363737; */
     display: flex;
     overflow-x: auto;
     padding: 5px 5px 0 5px;
-  }
-  
-  .editor-tab {
+    height: 40px;
+}
+
+.selected-editor-tab{
     background-color: #1f1f1e;
-    padding: 5px 15px;
-    /* margin-right: 25px; */
-    border-radius: 5px 5px 0 0;
+   
+    padding-top: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 5px;
+    
+    border-radius: 9px 9px 0 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 200px;
-  }
-  
-  .editor-tab li {
+    margin-right: 2px;
+    height: 100%;
+    color: #dbdbda;
+    /* transition: background-color .1s ease-in; */
+
+}
+
+.editor-tab {
+    background-color: #363737;
+
+    padding: 5px 10px;
+    
+    border-radius: 9px 9px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 200px;
+    margin-right: 2px;
+    height: 100%;
+    /* transition: background-color .1s ease-in; */
+
+}
+.editor-tab:hover{
+    background-color: #404040;
+    /* margin-bottom: 5px; */
+    border-radius: 6px 6px 6px 6px;
+    height: 90%;
+}
+
+.selected-editor-tab>li{
+    list-style: none;
+    color: #dbdbda;
+    font-size: 1rem;
+}
+.editor-tab li {
     list-style: none;
     color: #dbdbda;
     font-size: 1rem;
 
-  }
-  
-  .editor-tab button {
+}
+.selected-editor-tab>button{
+    background-color: transparent;
+    border-radius: 4px;
+    border-color: transparent;
+    cursor: pointer;
+    margin-left: 10px;
+    color: #dbdbda;
+    padding: 5px;
+}
+
+.editor-tab button {
     background-color: transparent;
     border-radius: 4px;
     border-color: transparent;
@@ -160,20 +208,36 @@
     color: #dbdbda;
     padding: 5px;
 
-  }
-  
-  .editor-tab button:hover {
+}
+
+.editor-tab button:hover {
     background-color: #363737;
-  }
-  
-  .editor-tab button:focus {
+}
+
+.editor-tab button:focus {
     outline: none;
-  }
-  
-  /* Optional: Highlight active tab */
-  .editor-tab.active {
+}
+
+/* Optional: Highlight active tab */
+.editor-tab.active {
     background-color: #fff;
     border-bottom: 1px solid #ccc;
-  }
+}
 
-  
+
+.new-tab{
+    background-color: #363737;
+    border: 1px solid #363737;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 1.3rem;
+    color: #dbdbda;
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+}
+
+.new-tab:hover{
+    background-color: #404040;
+}
