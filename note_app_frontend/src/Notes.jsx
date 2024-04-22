@@ -5,122 +5,126 @@ import Split from "react-split"
 import './App.css'
 import './slider.css'
 
+import FormDialog from "./muiComponents/FormDialog"
+import NotificationsCheck from "./assets/BasicPopover"
+
+import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlined';
+import SearchIcon from '@mui/icons-material/Search';
+// import SearchNotes from "./components/SearchNotes"
+import Tooltip from '@mui/material/Tooltip';
+import SortNote from "./assets/SortNote"
+
 
 export default function App() {
 
-	const [noteData, setNoteData] = React.useState(null)
-	const [noteDescription, setNoteDescription] = React.useState(null)
-	const [noteTitle, setNoteTile] = React.useState(null)
-	const [isNewNote, setIsNewNote] = React.useState(false)
+	const [notes, setNotes] = React.useState([])
+	const [folders, setFolder] = React.useState([])
 	const [refreshNoteData, setRefreshNoteData] = React.useState(false)
 	const [selectedNote, setSelectedNote] = React.useState(null)
-	const [selectedFolderNote, setSelectedFolderNote] = React.useState(null)
+	const [selectedNoteData, setSelectedNoteData] = React.useState(null)
 
-	const [noteId, setNoteId] = React.useState(null)
-
-	const [folders, setFolder] = React.useState([])
+	const [search, setSearch] = React.useState(false);
 
 
 	React.useEffect(() => {          // this will fetch all the notes present in the database 
 		async function getNotes() {
 			const response = await fetch("http://127.0.0.1:5000/getNotes", {
-				method: 'POST',
+				method: 'GET',
 				headers: {
 					'Content-type': 'application/json; charset=UTF-8',
 				}
 			})
 			const data = await response.json()
 
-			setNoteData(data.notes);
-			setRefreshNoteData(false)
+			setNotes(data.notes);
+			setFolder(data.folders);
+			// setRefreshNoteData(false)
 
 		}
 		getNotes()
 
-	}, [isNewNote, refreshNoteData])
+	}, [refreshNoteData])
 
-
-	React.useEffect(() => {         //this will set the description State var. to the description of the selected note in the side bar 
-		if (selectedNote) {
-			noteData.map((note) => {
-				if (note[0] === selectedNote) {
-					setNoteId(note[0])
-					setNoteTile(note[1])
-					setNoteDescription(note[2])
+	React.useEffect(() => {
+		// console.log(selectedNote);
+		if (selectedNote !== null) {
+			notes.map(note => {
+				if (note.noteId === selectedNote) {
+					// console.log("selected note is " + note.noteId)
+					let temp = {
+						noteId: note.noteId,
+						noteName: note.noteName,
+						noteDescription: note.noteDescription
+					}
+					setSelectedNoteData(temp)
 				}
 			})
-		}
-		else if (selectedFolderNote) {
-			folders.map(folder => {
-				folder.folderNotes.map(ele => {
-					if (ele.noteId === selectedFolderNote) {
-						setNoteId(ele.noteId)
-						setNoteTile(ele.noteName)
-						setNoteDescription(ele.note)
-					}
-				})
-			})
+		} else {
+			setSelectedNoteData(null)
 		}
 
-	}, [selectedNote, noteData, selectedFolderNote])
+	}, [selectedNote])
 
 
+	const [splitSize, setSplitSize] = React.useState([20, 100])
 
-	React.useEffect(() => {        // this will create a new note and send it to server and update the selected note to this new notes id
-		async function newNotes(newNoteData) {
-			const response = await fetch("http://127.0.0.1:5000/newNotes", {
-				method: 'POST',
-				body: JSON.stringify(newNoteData),
-				headers: {
-					'Content-type': 'application/json; charset=UTF-8',
-				},
-			})
-			const data = await response.json()
-			console.log(data)
-			setIsNewNote(false)
-
-		}
-
-		if (isNewNote) {
-			const newNote = [noteData.length + 1, "new note", "new note test..."]
-			newNotes(newNote)
-			setSelectedNote(noteData.length + 1)
-
-		}
-
-
-	}, [isNewNote])
-	//todo- fix the new note is creating array not function!
+	const toggleSplit = () => {
+		setSplitSize(prevSize => (prevSize[0] === 20 ? [0, 120] : [20, 100]))
+	}
 
 
 
 
 	return (
-		<main>
-			<Split sizes={[20, 80]} direction="horizontal" className="split">
+		<div className="mainDiv">
+			<div className="side-controls">
+
+				<div className="toggle-sidebar">
+					<Tooltip title="sidebar" placement="right">
+						<i
+							onClick={toggleSplit}
+							className="nf nf-oct-sidebar_expand sidebar-icon"
+						></i>
+
+					</Tooltip>
+				</div>
+
+				<Tooltip title="bookmark" placement="right">
+					<BookmarkBorderOutlinedIcon className="bookmark-icon" />
+				</Tooltip>
+
+				<Tooltip title="search" placement="right">
+					<SearchIcon className="search-icon" onClick={() => { setSearch(prev => !prev) }} />
+				</Tooltip>
+
+				<FormDialog />
+				<NotificationsCheck />
+			</div>
+
+			<Split sizes={splitSize} direction="horizontal" className="split">
 
 				<Sidebar
-					noteData={noteData}
+					noteData={notes}
+
 					setSelectedNote={setSelectedNote}
-					setIsNewNote={setIsNewNote}
+					selectedNote={selectedNote}
 					setRefreshNoteData={setRefreshNoteData}
-					setSelectedFolderNote={setSelectedFolderNote}
 					setFolder={setFolder}
 					folders={folders}
+					splitSize={splitSize}
+					search={search}
+					setNotes={setNotes}
 
 				/>
 
 				<Editor
-					noteDescription={noteDescription}
-					setNoteDescription={setNoteDescription}
-					noteTitle={noteTitle}
-					noteId={noteId}
-					setNoteId={setNoteId}
-					setSelectedNote={setSelectedNote}
+					selectedNoteData={selectedNoteData}
+					setSelectedNoteData={setSelectedNoteData}
+					setRefreshNoteData={setRefreshNoteData}
 				/>
 
 			</Split>
 
-		</main>
+		</div>
 	)
 }

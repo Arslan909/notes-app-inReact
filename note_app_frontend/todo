@@ -1,0 +1,33 @@
+react tasks:
+  
+  - leave shared workspace / remove person from workspace 
+  - bookmark note
+  - fix landing login signup page design
+  - ad logout button
+  
+  
+Flask task:
+
+  - fix user session and jwt maybe (this time for real)
+  
+
+Extra:
+  - integrate some Ai model to assist in writing notes
+  - real time markdown rendering
+  - custom table generation
+
+Done task:
+  - delete folder functionality
+  - almost everything for side bar
+  - collapsing folders
+  - sync note selection with editor side tab and editpr area text etc
+  - serach user and send invite 
+  - area to check notifications 
+  - add logic for workspace share and test notification schema 
+  - workspace switching button
+  - modify api endpoint work according to shared workspaces
+  - fix update notes text in data base funcationality
+  - refactor editor side
+  - api procedure for notes content update
+  - simple functionaly like notes sort and search notes
+  - logout

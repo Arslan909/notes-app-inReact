@@ -1,20 +1,99 @@
-*{
+* {
     padding: 0;
     margin: 0;
     overflow-y: hidden;
     box-sizing: border-box;
 }
 
+/* Notes.jsx css propperites */
 
-/* side bar css */
-.side-bar{
-    /* height: 100vh; */
-    /* border: 2px solid rgb(192, 17, 17); */
-    background-color: #262727;
-    color: #dbdbda;
+.mainDiv {
+    display: flex;
 }
 
-.side-bar-options{
+.side-controls {
+    background-color: #262727;
+    border-right: 0.1px solid #373736;
+    width: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+}
+
+.toggle-sidebar {
+    background-color: #363737;
+    display: flex;
+    overflow-x: auto;
+    height: 40px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.share-icon {
+    margin-top: auto;
+    margin-bottom: 20px;
+}
+
+.notfication-icon {
+    margin-bottom: 20px;
+}
+
+.bookmark-icon {
+    color: #9f9e9f;
+    margin-top: 10px
+}
+
+.search-icon {
+    color: #9f9e9f;
+    margin-top: 10px
+}
+
+.sidebar-icon {
+    color: #9f9e9f;
+    font-size: 1.2rem;
+}
+
+
+
+.workspaceBtn{
+    background-color: #262727;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    color: #9f9e9f;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.privilige-alert{
+    color: black;
+    width: 100%;
+    /* margin-top: auto; */
+    background-color: yellow;
+    text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+/* SIDEBAR CSS */
+
+.side-bar {
+    background-color: #262727;
+    color: #9f9e9f;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.side-bar-options {
     display: flex;
     justify-content: center;
     padding: 10px;
@@ -22,32 +101,34 @@
     /* background-color: blueviolet; */
 
 }
-.side-bar-options-btn{
+
+.side-bar-options-btn {
     background-color: #262727;
     border: 1px solid #262727;
     border-radius: 5px;
     padding: 8px;
     /* margin-right: 5px; */
 }
-.side-bar-options-btn:hover{
+
+.side-bar-options-btn:hover {
     background-color: #404040;
 }
 
 .new-folder-icon,
-.new-note-icon{
+.new-note-icon {
     font-size: 1.1rem;
-    color: #dbdbda;
+    color: #9f9e9f;
     font-weight: 100;
 }
 
 
 
 
-.note-li{
+.note-li {
     list-style-type: none;
 }
 
-.note-cont{
+.note-cont {
 
     margin-bottom: 10px;
     display: flex;
@@ -58,18 +139,21 @@
     margin-right: 10px;
     border-radius: 5px;
 }
-.note-cont:focus{
+
+.note-cont:focus {
     background-color: #363737;
 }
-.note-cont:hover{
+
+.note-cont:hover {
     background-color: #363737;
-    .note-del-btn{
+
+    .note-del-btn {
         display: block;
     }
 
 }
 
-.note-del-btn{
+.note-del-btn {
     background-color: #363737;
     border: 1px solid #363737;
     border-radius: 5px;
@@ -77,19 +161,69 @@
     margin-right: 20px;
     display: none;
 }
-.note-del-btn:hover{
+
+.note-del-btn:hover {
     background-color: #404040;
 }
-.delete-icon{
+
+.delete-icon {
     font-size: 0.8rem;
     color: #dbdbda;
     font-weight: 100;
 }
 
 
-.note-title-cont{
+.note-title-cont {
     font-family: 'Gothic A1', sans-serif;
     /* font-weight: 600; */
     font-size: 1rem;
-    text-overflow:ellipsis;
+    text-overflow: ellipsis;
+}
+
+
+/* notes in folder css */
+
+.noteInFolder-cont {
+    margin-bottom: 10px;
+    display: flex;
+    text-indent: 20px;
+    justify-content: space-between;
+    padding: 5px;
+    margin-left: 30px;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+.noteInFolder-title-cont {
+    font-family: 'Gothic A1', sans-serif;
+    font-size: 1rem;
+    text-overflow: ellipsis;
+
+}
+
+/* side bar most bottom div css(idkw hat to call it yet)  */
+.share-controls {
+    background-color:#262727;
+    width: 100%;
+    margin-top: auto;
+    border-top: 1px solid #9f9e9f;
+    
+}
+
+
+/* NOTICCATIONS CSS */
+
+.notification-container {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background-color: #323232;
+    color: #ffffff;
+    /* border-radius: 4px; */
+    /* margin-bottom: 8px; */
+    cursor: pointer;
+}
+
+.notification-container button {
+    margin-left: 8px;
 }
