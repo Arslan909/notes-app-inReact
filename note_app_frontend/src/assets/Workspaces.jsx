@@ -1,9 +1,10 @@
 import * as React from 'react'
 import Popover from '@mui/material/Popover'
 import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
+// import Button from '@mui/material/Button'
 import axios from 'axios'
 import PropTypes from 'prop-types'
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 export default function Workspaces(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -46,26 +47,26 @@ export default function Workspaces(props) {
   const handleSelectProfile = (profile) => {
     let userId = profile.userId
     try {
-      axios.post("http://127.0.0.1:5000/shiftWorkspace", {userId})
+      axios.post("http://127.0.0.1:5000/shiftWorkspace", { userId })
         .then(res => {
           if (res.statusText === "OK") {
             setCurrentProfile(profile)
-            if(profile.userId === defaultProfile.userId){
+            if (profile.userId === defaultProfile.userId) {
               props.setSharedFetching(false)
-              
-            }else{
+
+            } else {
               props.setSharedFetching(true)
 
             }
             props.setRefreshNoteData(prev => !prev)
             handleClose()
-            
-            if("userPrivilege" in profile){
+
+            if ("userPrivilege" in profile) {
               props.setPrivilege(profile.userPrivilege)
-            }else{
+            } else {
               props.setPrivilege(null)
             }
-            
+
           }
           console.log(res.data.message)
 
@@ -102,14 +103,18 @@ export default function Workspaces(props) {
         }}
       >
         {teamSpaces.length > 0 ? (
-          <div>
-            <div className="notification-container" onClick={() => { handleSelectProfile(defaultProfile) }}>
-              <Typography>Workspace {defaultProfile.userEmail}</Typography> <span>{(defaultProfile.userEmail === currentProfile.userEmail? "✓" : "")}</span>
+          <div style={{backgroundColor:" #323232"}}>
+
+            <div className="notification-container" >
+              <Typography onClick={() => { handleSelectProfile(defaultProfile) }}>Workspace {defaultProfile.userEmail}</Typography>
+              <span>{(defaultProfile.userEmail === currentProfile.userEmail ? "✓" : "")}</span>
             </div>
 
             {teamSpaces.map((profile, index) => (
-              <div className="notification-container" key={index} onClick={() => { handleSelectProfile(profile) }}>
-                <Typography>Workspace {profile.userEmail}</Typography><span>{(profile.userEmail === currentProfile.userEmail? "✓" : "")}</span>
+              <div className="notification-container" key={index}>
+                <Typography onClick={() => { handleSelectProfile(profile) }} >Workspace {profile.userEmail}</Typography>
+                <span>{(profile.userEmail === currentProfile.userEmail ? "✓" : "")}</span>
+                <ExitToAppIcon onClick={()=>{console.log("call leave work space function")}} sx={{color:"#dbdbda"}}/>
               </div>
             ))}
           </div>
@@ -127,6 +132,6 @@ export default function Workspaces(props) {
 
 Workspaces.propTypes = {
   setRefreshNoteData: PropTypes.func,
-  setSharedFetching:PropTypes.func,
-  setPrivilege:PropTypes.func
+  setSharedFetching: PropTypes.func,
+  setPrivilege: PropTypes.func
 };

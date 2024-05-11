@@ -13,8 +13,6 @@ export default function Sidebar(props) {
 
     const [sortType, setSortType] = React.useState(null)
 
-    console.log(sortType);
-
     function sortNotes(notes) {
         if (sortType === "AZ") {
             return notes.slice().sort((a, b) => {
@@ -42,15 +40,14 @@ export default function Sidebar(props) {
     // stuff done to make a ntoe in root 
     if (props.noteData != null && props.noteData.length != 0) {
         let tempNoteData = props.noteData.filter(ele => ele.folder_id === null)
-        console.log(tempNoteData)
         tempNoteData = sortNotes(tempNoteData)
 
         noteList = tempNoteData.map((note) => {
             if (note.folder_id == null) {
                 return (
-                    <div key={note.noteId} className='note-cont' tabIndex={0} onClick={() => { props.setSelectedNote(note.noteId) }}>
+                    <div key={note.noteId} className='note-cont' tabIndex={0}>
 
-                        <div className='note-title-cont'>
+                        <div className='note-title-cont' onClick={() => { props.setSelectedNote(note.noteId) }}>
                             <li className='note-li'>{note.noteName} </li>
                         </div>
                         <button className='note-del-btn' onClick={() => { deleteNote(note.noteId) }}><i className='nf nf-md-delete_outline delete-icon'></i></button>
@@ -78,7 +75,6 @@ export default function Sidebar(props) {
             return (
                 <>
                     <div key={folder.folderId} className='note-cont' tabIndex={0}>
-
                         <div className='note-title-cont' onClick={() => { toggleFolder(folder.folderId) }}>
                             <li className='note-li'>
                                 <span>
@@ -110,8 +106,8 @@ export default function Sidebar(props) {
                         <ul>
                             {folderNotes.map(note => (
 
-                                <div key={note.noteId} className='note-cont' tabIndex={0} onClick={() => { props.setSelectedNote(note.noteId) }}>
-                                    <div className='note-title-cont'>
+                                <div key={note.noteId} className='note-cont' tabIndex={0} >
+                                    <div className='note-title-cont' onClick={() => { props.setSelectedNote(note.noteId) }}>
                                         <li className='note-li'>{note.noteName} </li>
                                     </div>
                                     <button className='note-del-btn' onClick={() => { deleteNote(note.noteId) }}><i className='nf nf-md-delete_outline delete-icon'></i></button>
@@ -132,8 +128,9 @@ export default function Sidebar(props) {
 
 
     async function createNewNote() {
+        let temp = props.noteData.length+1
         const data = {
-            noteName: "new Note",
+            noteName: `New Note ${temp}`,
             noteDescription: "# Tittle",
             folderId: null,
         }
@@ -162,8 +159,9 @@ export default function Sidebar(props) {
     }
 
     function createFolderNote(folderId) {
+        let temp = props.noteData.length+1
         const data = {
-            noteName: "new Note",
+            noteName: `New Note ${temp}`,
             noteDescription: "# Title",
             folderId: folderId,
         };

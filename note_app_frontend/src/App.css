@@ -34,10 +34,16 @@
 .share-icon {
     margin-top: auto;
     margin-bottom: 20px;
+    color: #9f9e9f;
 }
 
 .notfication-icon {
     margin-bottom: 20px;
+    color: #9f9e9f;
+}
+.logout-icon{
+    margin-bottom: 20px;
+    color: #9f9e9f;
 }
 
 .bookmark-icon {
@@ -178,6 +184,7 @@
     /* font-weight: 600; */
     font-size: 1rem;
     text-overflow: ellipsis;
+    margin-bottom: 6px;
 }
 
 
@@ -226,4 +233,12 @@
 
 .notification-container button {
     margin-left: 8px;
+}
+
+/* sort-note component css */
+
+.sort-note-cont{
+    background-color: #323232;
+    color: #ffffff;
+    cursor: pointer;
 }

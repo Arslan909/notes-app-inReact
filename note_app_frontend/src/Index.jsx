@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 
 
-import Entrance from './components/Entrance.jsx'
+// import Entrance from './components/Entrance.jsx'
 import Login from './components/Login.jsx'
+import Signup from './components/Signup.jsx'
 import App from './Notes.jsx'
-import Test from './components/Test.jsx'
+// import Test from './components/Test.jsx'
 
 
 export default function Index() {
@@ -14,12 +15,10 @@ export default function Index() {
 			<BrowserRouter>
 
 				<Routes>
-                    {/* <Route path="/" element={<Entrance/>}></Route>
-                    <Route path="/login" element={<Login/>}></Route> */}
-                    <Route path="/" element={<App/>}></Route>
+                    <Route path="/login" element={<Login/>}></Route>
+                    <Route path="/signup" element={<Signup/>}></Route>
+                    <Route path="/notes" element={<App/>}></Route>
 
-                    {/* <Route path="/test/:id" element={<Test/>}></Route> */}
-                    <Route path="/t est" element={<Test/>}></Route>
 				</Routes>
 			</BrowserRouter>
 

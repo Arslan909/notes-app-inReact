@@ -1,9 +1,11 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_mysqldb import MySQL
+from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity,JWTManager, jwt_required
 
 app = Flask(__name__)
 CORS(app)
+jwt = JWTManager(app)
 # CORS(app, supports_credentials=True)
 
 
@@ -14,7 +16,7 @@ app.config["MYSQL_DB"] = "notes_app_3"
 
 
 mysql = MySQL(app)
-# app.secret_key = 'not-so-secrete-huh'
+app.secret_key = 'not-so-secrete-huh'
 session = dict()
 
 
@@ -24,46 +26,53 @@ def index():
     return jsonify({"message": "hello form flask"})
 
 
-@app.route("/login", methods=["GET"])
+@app.route("/login", methods=["POST"])
 def login():
-    # loginData = request.get_json()
-    # uname = loginData['username']
-    # pwd = loginData['password']
-    uname = "u2"
-    pwd = "p2"
+    loginData = request.get_json()
+    uname = loginData['username']
+    pwd = loginData['password']
 
     cur = mysql.connection.cursor()
     cur.execute("CALL checkLogin(%s, %s)", (uname, pwd))
     user_id = cur.fetchone()
-    # print(user_id)
+    print(user_id)
     if user_id[0] != 0:
         session["user_id"] = user_id[0]
+        access_token = create_access_token(identity=user_id[0])
 
         test = session["user_id"]
-        return jsonify({"userId": test}), 200
+        return jsonify({"userId": test, "access_token":access_token }), 200
     else:
         return jsonify({"error": "Invalid credentials"}), 401
 
 
 @app.route("/signup", methods=["POST"])
 def signup():
-    # loginData = request.get_json()
-    # uname = loginData['username']
-    # pwd = loginData['password']
-    uname = "u2"
-    pwd = "p2"
+    loginData = request.get_json()
+    fullName = loginData['fullName']
+    uname = loginData['username']
+    pwd = loginData['password']
+    
+    try:
+        cur = mysql.connection.cursor()
+        cur.callproc('signUp', (fullName, uname, pwd))
+        result = cur.fetchall()
 
-    cur = mysql.connection.cursor()
-    cur.callproc("signUp", [uname, pwd, 0])
-    mysql.connection.commit()
+        cur.close()
+        mysql.connection.commit()
 
-    cur.execute("SELECT @success")
-    message = cur.fetchone()
+        if result:
+            status =  result[0][0]
+            message = result[0][1]
+            
+            if status == "success":
+                return jsonify({'message': message}), 200
+            else:
+                return jsonify({'error': message}), 409
 
-    if message[0] == 1:
-        return jsonify({"message": "user created"}), 200
-    else:
-        return jsonify({"error": "email already in use"}), 401
+    except Exception as e:
+        return jsonify({'message': str(e)}), 500
+
 
 
 @app.route("/getNotes", methods=["GET"])
@@ -117,7 +126,7 @@ def getFolder(userId):
     cur.execute("CALL getFolders(%s)", (userId,))
     folders = []
     for row in cur.fetchall():
-        print(row)
+        # print(row)
         folder = {
             "folderId": row[0],
             "folderName": row[1],

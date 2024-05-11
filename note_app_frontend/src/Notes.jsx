@@ -12,7 +12,7 @@ import BookmarkBorderOutlinedIcon from '@mui/icons-material/BookmarkBorderOutlin
 import SearchIcon from '@mui/icons-material/Search';
 // import SearchNotes from "./components/SearchNotes"
 import Tooltip from '@mui/material/Tooltip';
-import SortNote from "./assets/SortNote"
+import LogoutIcon from '@mui/icons-material/Logout';
 
 
 export default function App() {
@@ -99,6 +99,11 @@ export default function App() {
 
 				<FormDialog />
 				<NotificationsCheck />
+
+				<Tooltip title="logout" placement="right">
+					<LogoutIcon className="logout-icon"  />
+				</Tooltip>
+
 			</div>
 
 			<Split sizes={splitSize} direction="horizontal" className="split">

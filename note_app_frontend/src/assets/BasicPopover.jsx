@@ -90,7 +90,7 @@ export default function BasicPopover() {
   return (
     <div>
       <Tooltip title="check notifications" placement='right'>
-        <NotificationsActiveOutlinedIcon className='notfication-icon' onClick={handleClick} sx={{ color: "#9f9e9f" }} />
+        <NotificationsActiveOutlinedIcon className='notfication-icon' onClick={handleClick} />
       </Tooltip>
       
       {/* <Button aria-describedby={id} variant="contained" onClick={handleClick}>

@@ -71,7 +71,7 @@ export default function FormDialog() {
     <React.Fragment>
       <Tooltip title="share workspace" placement='right'>
 
-        <ShareOutlinedIcon className="share-icon" onClick={handleClickOpen} sx={{ color: "#9f9e9f" }} />
+        <ShareOutlinedIcon className="share-icon" onClick={handleClickOpen} />
       </Tooltip>
 
       <Dialog
