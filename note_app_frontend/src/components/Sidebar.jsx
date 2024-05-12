@@ -12,6 +12,9 @@ export default function Sidebar(props) {
     const [privilege, setPrivilege] = React.useState(null)
 
     const [sortType, setSortType] = React.useState(null)
+    const token = localStorage.getItem("access_token")
+    // console.log(token);
+
 
     function sortNotes(notes) {
         if (sortType === "AZ") {
@@ -71,7 +74,7 @@ export default function Sidebar(props) {
     if (props.folders != null && props.folders.length !== 0) {
         folderList = props.folders.map(folder => {
             let folderNotes = props.noteData.filter(note => note.folder_id === folder.folderId)
-            folderNotes= sortNotes(folderNotes)
+            folderNotes = sortNotes(folderNotes)
             return (
                 <>
                     <div key={folder.folderId} className='note-cont' tabIndex={0}>
@@ -128,7 +131,7 @@ export default function Sidebar(props) {
 
 
     async function createNewNote() {
-        let temp = props.noteData.length+1
+        let temp = props.noteData.length + 1
         const data = {
             noteName: `New Note ${temp}`,
             noteDescription: "# Tittle",
@@ -136,7 +139,11 @@ export default function Sidebar(props) {
         }
 
         try {
-            const response = await axios.post('http://127.0.0.1:5000/newNotes', data);
+            const response = await axios.post('http://127.0.0.1:5000/newNotes', data, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             console.log(response.data);
             props.setRefreshNoteData(prev => !prev)
         } catch (error) {
@@ -150,7 +157,11 @@ export default function Sidebar(props) {
         };
 
         try {
-            const response = await axios.post('http://127.0.0.1:5000/createFolder', data)
+            const response = await axios.post('http://127.0.0.1:5000/createFolder', data, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
             console.log(response.data)
             props.setRefreshNoteData(prev => !prev)
         } catch (error) {
@@ -159,7 +170,7 @@ export default function Sidebar(props) {
     }
 
     function createFolderNote(folderId) {
-        let temp = props.noteData.length+1
+        let temp = props.noteData.length + 1
         const data = {
             noteName: `New Note ${temp}`,
             noteDescription: "# Title",
@@ -167,7 +178,11 @@ export default function Sidebar(props) {
         };
 
 
-        axios.post('http://127.0.0.1:5000/folderNote', data)
+        axios.post('http://127.0.0.1:5000/folderNote', data, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then(response => {
                 console.log(response.data)
                 props.setRefreshNoteData(prev => !prev)
@@ -187,7 +202,11 @@ export default function Sidebar(props) {
     }
 
     function deleteNote(noteId) {
-        axios.post('http://127.0.0.1:5000/deleteNote', { noteId })
+        axios.post('http://127.0.0.1:5000/deleteNote', { noteId }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then(response => {
                 console.log(response.data)
                 props.setRefreshNoteData(prev => !prev)
@@ -202,7 +221,11 @@ export default function Sidebar(props) {
 
     function deleteFolder(folderId) {
 
-        axios.post('http://127.0.0.1:5000/deleteFolder', { folderId })
+        axios.post('http://127.0.0.1:5000/deleteFolder', { folderId }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then(response => {
                 console.log(response.data)
                 props.setRefreshNoteData(prev => !prev)
@@ -218,11 +241,12 @@ export default function Sidebar(props) {
             <div className="side-bar" style={{ display: props.splitSize[0] === 20 ? 'flex' : 'none' }}>
 
                 <div className="toggle-sidebar">
-                    {/* <h4>test</h4> */}
+                    {/* <h4>area at the top of side bar for no reason at all</h4> */}
                 </div>
                 {
                     props.search
                         ? <SearchNotes setNotes={props.setNotes} />
+
                         : <header className="side-bar-options">
                             <button className='side-bar-options-btn' disabled={privilege === "read_only"} onClick={createNewNote}>
                                 <i className="nf nf-md-file_plus_outline new-note-icon" ></i>
@@ -241,9 +265,7 @@ export default function Sidebar(props) {
                                 <i className="nf nf-md-arrow_expand new-folder-icon"></i>
 
                             </button>
-                            {/* <button className='side-bar-options-btn'>
-                       
-                    </button> */}
+                        
                         </header>
                 }
 

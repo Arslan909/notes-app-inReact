@@ -1,14 +1,12 @@
 react tasks:
   
-  - leave shared workspace / remove person from workspace 
-  - bookmark note
-  - fix landing login signup page design
-  - ad logout button
-  
+  - remove person from workspace/ show whom you have share with  
+  - bookmark notes
+  - fix landing page 
+  - fix css 
   
 Flask task:
 
-  - fix user session and jwt maybe (this time for real)
   
 
 Extra:
@@ -31,3 +29,7 @@ Done task:
   - api procedure for notes content update
   - simple functionaly like notes sort and search notes
   - logout
+  - leave shared workspace /
+  - fix landing login signup page design
+  - add logout button
+  - fix user session and jwt maybe (this time for real)

@@ -11,10 +11,15 @@ export default function Workspaces(props) {
   const [currentProfile, setCurrentProfile] = React.useState(null);
   const [defaultProfile, setDefaultProfile] = React.useState(null);
   const [teamSpaces, setTeamSpaces] = React.useState([]);
+  const token = localStorage.getItem("access_token")
 
   React.useEffect(() => {
     try {
-      axios.get("http://127.0.0.1:5000/getDefaultProfile")
+      axios.get("http://127.0.0.1:5000/getDefaultProfile", {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
         .then(res => {
 
           setCurrentProfile(res.data.defaultProfile[0]);
@@ -29,7 +34,11 @@ export default function Workspaces(props) {
 
   const handleClick = (event) => {
     try {
-      axios.get("http://127.0.0.1:5000/getSharedSpaces")
+      axios.get("http://127.0.0.1:5000/getSharedSpaces", {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
         .then(res => {
           setTeamSpaces(res.data.sharedProfiles)
         })
@@ -47,7 +56,11 @@ export default function Workspaces(props) {
   const handleSelectProfile = (profile) => {
     let userId = profile.userId
     try {
-      axios.post("http://127.0.0.1:5000/shiftWorkspace", { userId })
+      axios.post("http://127.0.0.1:5000/shiftWorkspace", { userId }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
         .then(res => {
           if (res.statusText === "OK") {
             setCurrentProfile(profile)
@@ -77,6 +90,30 @@ export default function Workspaces(props) {
 
   }
 
+  const leaveWorkspace = (profile) => {
+    console.log(profile);
+    const profileData = {
+      "userId": profile.userId
+    }
+
+    fetch("http://127.0.0.1:5000/leaveWorkspace", {
+      method: "POST",
+      body: JSON.stringify(profileData),
+      headers: {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then(res => {
+        if (res.ok) {
+          handleClose()
+          return res.json()
+        }
+      })
+    console.log("burrrrrrrr");
+
+  }
+
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
 
@@ -103,7 +140,7 @@ export default function Workspaces(props) {
         }}
       >
         {teamSpaces.length > 0 ? (
-          <div style={{backgroundColor:" #323232"}}>
+          <div style={{ backgroundColor: " #323232" }}>
 
             <div className="notification-container" >
               <Typography onClick={() => { handleSelectProfile(defaultProfile) }}>Workspace {defaultProfile.userEmail}</Typography>
@@ -114,7 +151,8 @@ export default function Workspaces(props) {
               <div className="notification-container" key={index}>
                 <Typography onClick={() => { handleSelectProfile(profile) }} >Workspace {profile.userEmail}</Typography>
                 <span>{(profile.userEmail === currentProfile.userEmail ? "✓" : "")}</span>
-                <ExitToAppIcon onClick={()=>{console.log("call leave work space function")}} sx={{color:"#dbdbda"}}/>
+
+                <ExitToAppIcon onClick={() => { leaveWorkspace(profile) }} sx={{ color: "#dbdbda" }} />
               </div>
             ))}
           </div>

@@ -95,7 +95,7 @@ export default function Login() {
           placeholder="Enter password"
         // required
         />
-        <button type="submit">Sign in</button>
+        <button type="submit">Sign up</button>
         <p className="create-account-text">Already have an account? <span><Link to="/login" className="sign-up-link">Sign in</Link></span></p>
       </form>
     </div>

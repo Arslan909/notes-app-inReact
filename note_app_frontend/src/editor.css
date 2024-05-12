@@ -64,18 +64,7 @@
 
 }
 
-.note-pad-viewarea::-webkit-scrollbar {
-    width: 5px;
-}
 
-.note-pad-viewarea::-webkit-scrollbar-thumb {
-    background-color: #333;
-    border-radius: 4px;
-}
-
-.note-pad-viewarea::-webkit-scrollbar-track {
-    background-color: #1f1f1e;
-}
 
 .note-pad-viewarea:focus {
     outline: none;

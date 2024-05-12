@@ -11,10 +11,15 @@ import Tooltip from '@mui/material/Tooltip';
 export default function BasicPopover() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [notifications, setNotifications] = React.useState([]);
+  const token = localStorage.getItem("access_token")
 
   const handleClick = (event) => {
     try {
-      axios.post("http://127.0.0.1:5000/notificationAlert")
+      axios.post("http://127.0.0.1:5000/notificationAlert",{}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
         .then(res => {
           // console.log(res.data.notifications);
           const temp = res.data.notifications.map((ele, index) => (
@@ -22,7 +27,6 @@ export default function BasicPopover() {
               <span>{ele.senderUsername} sent a workspace share invite</span>
               <Button className='accept-notification' variant="contained" size="small" onClick={() => { handleAccept(ele) }}>✓</Button>
               <Button className='reject-notification' variant="contained" size="small" onClick={() => { handleReject(ele) }}>✗</Button>
-              {/* <Button className='reject-notification' variant="contained" size="small" onClick={() => { handleReject(ele) }}>✗</Button> */}
             </div>
           ));
           setNotifications(temp)
@@ -40,7 +44,11 @@ export default function BasicPopover() {
     }
 
     try {
-      axios.post("http://127.0.0.1:5000/acceptInvitation", inviationData)
+      axios.post("http://127.0.0.1:5000/acceptInvitation", inviationData, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
         .then(res => {
           console.log(res.data.message)
           if (res.status === 200) {
@@ -63,7 +71,11 @@ export default function BasicPopover() {
     console.log(inviationData);
 
     try {
-      axios.post("http://127.0.0.1:5000/rejectInvitation", inviationData)
+      axios.post("http://127.0.0.1:5000/rejectInvitation", inviationData, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
         .then(res => {
           console.log(res.data.message);
           if (res.status === 200) {
@@ -92,7 +104,7 @@ export default function BasicPopover() {
       <Tooltip title="check notifications" placement='right'>
         <NotificationsActiveOutlinedIcon className='notfication-icon' onClick={handleClick} />
       </Tooltip>
-      
+
       {/* <Button aria-describedby={id} variant="contained" onClick={handleClick}>
       </Button> */}
       <Popover

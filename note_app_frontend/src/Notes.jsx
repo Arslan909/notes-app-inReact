@@ -2,8 +2,10 @@ import React from "react"
 import Sidebar from "./components/Sidebar"
 import Editor from "./components/Editor"
 import Split from "react-split"
-import './App.css'
 import './slider.css'
+import { useNavigate } from 'react-router-dom';
+
+import './App.css'
 
 import FormDialog from "./muiComponents/FormDialog"
 import NotificationsCheck from "./assets/BasicPopover"
@@ -25,13 +27,38 @@ export default function App() {
 
 	const [search, setSearch] = React.useState(false);
 
+	const navigate = useNavigate();
 
 	React.useEffect(() => {          // this will fetch all the notes present in the database 
+		const token = localStorage.getItem("access_token")
 		async function getNotes() {
 			const response = await fetch("http://127.0.0.1:5000/getNotes", {
 				method: 'GET',
 				headers: {
 					'Content-type': 'application/json; charset=UTF-8',
+					'Authorization': `Bearer ${token}`
+				}
+			})
+			const data = await response.json()
+
+			setNotes(data.notes);
+			setFolder(data.folders);
+			// setRefreshNoteData(false)
+
+		}
+		getNotes()
+
+	}, [])
+
+
+	React.useEffect(() => {          // this will fetch all the notes present in the database 
+		const token = localStorage.getItem("access_token")
+		async function getNotes() {
+			const response = await fetch("http://127.0.0.1:5000/getNotes", {
+				method: 'GET',
+				headers: {
+					'Content-type': 'application/json; charset=UTF-8',
+					'Authorization': `Bearer ${token}`
 				}
 			})
 			const data = await response.json()
@@ -72,6 +99,17 @@ export default function App() {
 		setSplitSize(prevSize => (prevSize[0] === 20 ? [0, 120] : [20, 100]))
 	}
 
+	const logout = ()=>{
+		localStorage.clear()
+		fetch("http://127.0.0.1:5000/logout", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+			navigate("/login")
+	}
+
 
 
 
@@ -101,7 +139,7 @@ export default function App() {
 				<NotificationsCheck />
 
 				<Tooltip title="logout" placement="right">
-					<LogoutIcon className="logout-icon"  />
+					<LogoutIcon className="logout-icon"  onClick={logout} />
 				</Tooltip>
 
 			</div>

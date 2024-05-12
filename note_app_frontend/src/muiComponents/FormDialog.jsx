@@ -22,10 +22,16 @@ export default function FormDialog() {
   const [open, setOpen] = React.useState(false);
   const [searchText, setSearchText] = React.useState('');
   const [searchResults, setSearchResults] = React.useState([]);
+  const token = localStorage.getItem("access_token")
+  // console.log(token);
 
   const handleClickOpen = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5000/allUsers')
+      const response = await axios.get('http://127.0.0.1:5000/allUsers', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
       people = response.data.users
       // console.log(people)
       setOpen(true)
@@ -48,7 +54,11 @@ export default function FormDialog() {
     }
 
     try {
-      axios.post("http://127.0.0.1:5000/sendInvitation", inviationData)
+      axios.post("http://127.0.0.1:5000/sendInvitation", inviationData, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
         .then(res => {
           setSearchText("")
           console.log(res.data.message)

@@ -36,11 +36,11 @@ def login():
     cur.execute("CALL checkLogin(%s, %s)", (uname, pwd))
     user_id = cur.fetchone()
     if user_id[0] != 0:
-        # session["user_id"] = user_id[0]
+        session["user_id"] = user_id[0]
         access_token = create_access_token(identity=user_id[0])
 
-        # test = session["user_id"]
-        return jsonify({"access_token":access_token }), 200
+        test = session["user_id"]
+        return jsonify({"userId": test, "access_token":access_token }), 200
     else:
         return jsonify({"error": "Invalid credentials"}), 401
 
@@ -77,7 +77,9 @@ def signup():
 @app.route("/getNotes", methods=["GET"])
 @jwt_required()
 def getData():
-    if "sharedId" in session:
+    if len(session) == 0:
+        return jsonify({"error": "Not logged in"}), 404
+    elif "sharedId" in session:
         print("exe this")
         userId = session["sharedId"]
         notes = getNotes(userId)
@@ -85,10 +87,11 @@ def getData():
 
         data = {"notes": notes, "folders": folders}
 
-        return jsonify(data) 
+        return jsonify(data)
+        
     else:
         userId =  get_jwt_identity()
-        
+        # userId = session["user_id"]
         notes = getNotes(userId)
         folders = getFolder(userId)
 
@@ -138,7 +141,9 @@ def getFolder(userId):
 @app.route("/newNotes", methods=["POST"])
 @jwt_required()
 def new_Notes():
-    if "sharedId" in session:
+    if len(session) == 0:
+        return jsonify({"error": "Not logged in"}), 404
+    elif "sharedId" in session:
         data = request.get_json()
         print("exe this")
         userId = session["sharedId"]
@@ -154,8 +159,7 @@ def new_Notes():
         return jsonify({"new note added": data})
     else:
         data = request.get_json()
-        userId =  get_jwt_identity()
-        
+        userId = session["user_id"]
 
         # data = { # sample test
         #     "noteName": "new Note",
@@ -178,7 +182,9 @@ def new_Notes():
 @app.route("/createFolder", methods=["POST"])
 @jwt_required()
 def createFolder():
-    if "sharedId" in session:
+    if len(session) == 0:
+        return jsonify({"error": "Not logged in"}), 404
+    elif "sharedId" in session:
         data = request.get_json()
         print("exe this")
         userId = session["sharedId"]
@@ -191,8 +197,7 @@ def createFolder():
         return jsonify({"new note added": data})
     else:
         data = request.get_json()
-        userId =  get_jwt_identity()
-        
+        userId = session["user_id"]
 
         # data = {"folderName": "untitled"} # sample
 
@@ -208,7 +213,9 @@ def createFolder():
 @app.route("/folderNote", methods=["POST"])
 @jwt_required()
 def newFolderNote():
-    if "sharedId" in session:
+    if len(session) == 0:
+        return jsonify({"error": "Not logged in"}), 404
+    elif "sharedId" in session:
         print("exe this")
         userId = session["sharedId"]
         
@@ -224,8 +231,7 @@ def newFolderNote():
         return jsonify({"new note added": data})
     else:
         data = request.get_json()
-        userId =  get_jwt_identity()
-        
+        userId = session["user_id"]
 
         # data = { # sample
         #     "noteName": "new Note",
@@ -248,64 +254,75 @@ def newFolderNote():
 @app.route("/searchUser", methods=["POST"])
 @jwt_required()
 def searchUser():
-    uname = request.args.get("username")
+    if len(session) == 0:
+        return jsonify({"error": "Not logged in"}), 404
+    else:
+        uname = request.args.get("username")
 
-    cur = mysql.connection.cursor()
-    cur.callproc("searchUser", [uname])
-    results = cur.fetchall()
+        cur = mysql.connection.cursor()
+        cur.callproc("searchUser", [uname])
+        results = cur.fetchall()
 
-    return jsonify({"users": results}), 200
+        return jsonify({"users": results}), 200
 
 
 @app.route("/allUsers", methods=["GET"])
 @jwt_required()
 def allUsers():
-    cur = mysql.connection.cursor()
-    cur.callproc("allUsers")
-    results = cur.fetchall()
-    users = []
-    for res in results:
-        temp = {"userID": res[0], "userEmail": res[1]}
-        users.append(temp)
+    if len(session) == 0:
+        return jsonify({"error": "Not logged in"}), 404
+    else:
 
-    # print(users)
-    
-    return jsonify({"users": users}), 200
+        cur = mysql.connection.cursor()
+        cur.callproc("allUsers")
+        results = cur.fetchall()
+        users = []
+        for res in results:
+            temp = {"userID": res[0], "userEmail": res[1]}
+            users.append(temp)
+
+        # print(users)
+
+        return jsonify({"users": users}), 200
 
 
 @app.route("/sendInvitation", methods=["POST"])
 @jwt_required()
 def sendInvitation():
-    try:
-        invitationData = request.json
-        sender =  get_jwt_identity()
-        # sender = session["user_id"]
-        receiver = invitationData["reciever"]
-        status = "pending"
-        privilege = invitationData["privilege"]
+    if len(session) == 0:
+        return jsonify({"message": "Not logged in"}), 404
+    else:
+        try:
+            invitationData = request.json
+            sender = session["user_id"]
+            receiver = invitationData["reciever"]
+            status = "pending"
+            privilege = invitationData["privilege"]
 
-        if sender is None or receiver is None or privilege is None:
-            return jsonify({"message": "Missing required parameters"}), 400
-        
-        if sender == receiver:
-            return jsonify({"message": "sender and reciver cant be same"}), 400
+            if sender is None or receiver is None or privilege is None:
+                return jsonify({"message": "Missing required parameters"}), 400
+            
+            if sender == receiver:
+                return jsonify({"message": "sender and reciver cant be same"}), 400
 
-        cur = mysql.connection.cursor()
-        cur.execute("CALL sendNotification(%s, %s, %s, %s)",(sender, receiver, status, privilege))
-        mysql.connection.commit()
+            cur = mysql.connection.cursor()
+            cur.execute("CALL sendNotification(%s, %s, %s, %s)",(sender, receiver, status, privilege))
+            mysql.connection.commit()
 
-        return jsonify({"message": "Invitation sent successfully"}), 200
-    except Exception as e:
-        print(e)
-        return jsonify({"message": "An unexpected error occurred"}), 500
+            return jsonify({"message": "Invitation sent successfully"}), 200
+        except Exception as e:
+            print(e)
+            return jsonify({"message": "An unexpected error occurred"}), 500
         
         
 @app.route("/notificationAlert", methods=["POST"])
 @jwt_required()
 def notificationAlert():
+    if len(session) == 0:
+        return jsonify({"message": "Not logged in"}), 404
+    else:
         try:
-            userId =  get_jwt_identity()
-            
+            userId = session["user_id"]
 
             cur = mysql.connection.cursor()
             cur.execute("CALL notificationAlert(%s)",(userId,))
@@ -327,13 +344,14 @@ def notificationAlert():
 @app.route("/acceptInvitation", methods=["POST"])
 @jwt_required()
 def acceptInvitation():
-    
+    if len(session) == 0:
+        return jsonify({"message": "Not logged in"}), 404
+    else:
         try:
             invitationData = request.json
-            receiver =  get_jwt_identity()
-            # receiver = session["user_id"]
+            receiver = session["user_id"]
             sender = invitationData.get("senderId")
-            # print(sender)
+            print(sender)
 
             if sender is None or receiver is None:
                 return jsonify({"message": "Missing required parameters"}), 400
@@ -355,11 +373,12 @@ def acceptInvitation():
 @app.route("/rejectInvitation", methods=["POST"])
 @jwt_required()
 def rejectInvitation():
-    
+    if len(session) == 0:
+        return jsonify({"message": "Not logged in"}), 404
+    else:
         try:
             invitationData = request.json
-            receiver =  get_jwt_identity()
-            # receiver = session["user_id"]
+            receiver = session["user_id"]
             sender = invitationData.get("senderId")
 
             if sender is None or receiver is None:
@@ -378,13 +397,33 @@ def rejectInvitation():
             return jsonify({"message": "An unexpected error occurred"}), 500
 
 
+# @app.route("/getTeamSpaces", methods=["GET"])
+# def getTeamSpaces():
+#     if len(session) == 0:
+#         return jsonify({"error": "Not logged in"}), 404
+#     else:
+#         try:
+#             userId = session["user_id"]
+            
+#             defaultProfile = getDefaultProfile(userId)
+#             sharedProfiles = getSharedSpaces(userId)
+
+#             data = {"defaultProfile": defaultProfile, "sharedProfiles": sharedProfiles}
+
+#             return jsonify(data),200
+        
+#         except Exception as e:
+#             print(e)
+#             return jsonify({"message": "A server error occurred"}), 500  
+
 @app.route("/getDefaultProfile", methods=["GET"])
 @jwt_required()
 def getDefaultProfile():
-    
+    if len(session) == 0:
+        return jsonify({"error": "Not logged in"}), 404
+    else:
         try:
-            
-            userId =  get_jwt_identity()
+            userId = session["user_id"]
             
             cur = mysql.connection.cursor()
             cur.execute("CALL defaultProfile(%s)", (userId,))
@@ -404,10 +443,11 @@ def getDefaultProfile():
 @app.route("/getSharedSpaces", methods=["GET"])
 @jwt_required()
 def getSharedSpaces():
-    
+    if len(session) == 0:
+        return jsonify({"error": "Not logged in"}), 404
+    else:
         try:
-            
-            userId =  get_jwt_identity()
+            userId = session["user_id"]
             
             cur = mysql.connection.cursor()
             cur.execute("CALL sharedSpaces(%s)", (userId,))
@@ -429,10 +469,14 @@ def getSharedSpaces():
 @app.route("/shiftWorkspace", methods=["POST"])
 @jwt_required()
 def shiftWorkspace():
+    if len(session) == 0:
+        return jsonify({"error": "Not logged in"}), 404
+    else:
         try:
-            profileId = request.json
             
-            userId =  get_jwt_identity()
+            profileId = request.json
+            # print(profileId["userId"])
+            userId = session["user_id"]
             if(profileId["userId"] == userId):
                 del session["sharedId"]
             else:
@@ -448,7 +492,9 @@ def shiftWorkspace():
 @app.route("/deleteNote", methods=["POST"])
 @jwt_required()
 def deleteNote():
-    if "sharedId" in session:
+    if len(session) == 0:
+        return jsonify({"error": "Not logged in"}), 404
+    elif "sharedId" in session:
         request_data = request.get_json()
         print("exe this")
         userId = session["sharedId"]
@@ -465,8 +511,7 @@ def deleteNote():
         return jsonify({"deleted note ID ": noteId})    
     else:
         request_data = request.get_json()
-        
-        userId =  get_jwt_identity()
+        userId = session["user_id"]
         noteId = request_data["noteId"]
 
         cur = mysql.connection.cursor()
@@ -482,7 +527,9 @@ def deleteNote():
 @app.route("/deleteFolder", methods=["POST"])
 @jwt_required()
 def deleteFolder():
-    if "sharedId" in session:
+    if len(session) == 0:
+        return jsonify({"error": "Not logged in"}), 404
+    elif "sharedId" in session:
         request_data = request.get_json()
         print("exe this")
         userId = session["sharedId"]
@@ -499,8 +546,7 @@ def deleteFolder():
         return jsonify({"deleted folder ID ": folderId})
     else:
         request_data = request.get_json()
-        
-        userId =  get_jwt_identity()
+        userId = session["user_id"]
         folderId = request_data["folderId"]
 
         cur = mysql.connection.cursor()
@@ -518,7 +564,9 @@ def deleteFolder():
 def updateNoteDescription():
     try:
         data = request.json
-        if "sharedId" in session:
+        if len(session) == 0:
+            return jsonify({"error": "Not logged in"}), 404
+        elif "sharedId" in session:
             userId = session["sharedId"]
             noteId = data.get("noteId")
             noteDescription = data.get("noteDescription")
@@ -534,8 +582,7 @@ def updateNoteDescription():
 
             return jsonify({"message": "Note description updated successfully"}), 200
         else:
-            
-            userId =  get_jwt_identity()
+            userId = session["user_id"]
             noteId = data.get("noteId")
             noteDescription = data.get("noteContent")
             
@@ -560,7 +607,9 @@ def updateNoteDescription():
 @jwt_required()
 def search_notes():
     search_query = request.json.get('searchQuery')
-    if "sharedId" in session:
+    if len(session) == 0:
+        return jsonify({"error": "Not logged in"}), 404
+    elif "sharedId" in session:
         try:
             userId = session["sharedId"]
             cur = mysql.connection.cursor()
@@ -579,8 +628,7 @@ def search_notes():
             return jsonify({'error': str(e)}), 500
     else:
         try:
-            
-            userId =  get_jwt_identity()
+            userId = session["user_id"]
             cur = mysql.connection.cursor()
             cur.execute('Call searchNotes(%s, %s)', (search_query,userId))
             notes = []
@@ -602,9 +650,8 @@ def search_notes():
 @jwt_required()
 def leaveWorkspace():
     profileData = request.get_json()
-    # print(profileData)
-    
-    userId =  get_jwt_identity()
+    print(profileData)
+    userId = session["user_id"]
     leavingProfile = profileData["userId"]
     
     if leavingProfile == "":

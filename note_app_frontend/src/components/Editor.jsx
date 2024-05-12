@@ -154,7 +154,7 @@ export default function Editor(props) {
 		setSelectedTab(temp)
 		console.log(selectedTab)
 	}
-	console.log(selectedTab)
+	// console.log(selectedTab)
 
 	return (
 		<div className="editor-side-master-container">

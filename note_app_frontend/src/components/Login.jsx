@@ -10,11 +10,6 @@ export default function Login() {
     const navigate = useNavigate();
     const [errorMsg, setErrorMsg] = React.useState("")
 
-    // React.useEffect(() => {
-    //     fetch("http://127.0.0.1:5000/")
-    //         .then(res => res.json())
-    //         .then(data => console.log(data))
-    // }, [])
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -47,7 +42,7 @@ export default function Login() {
                 // console.log(data.userId);
                 // console.log(data.access_token);
 
-                localStorage.setItem('userId', data.userId);
+                // localStorage.setItem('userId', data.userId);
                 if(data.access_token !== "" ){
                     localStorage.setItem('access_token', data.access_token);
                 }
