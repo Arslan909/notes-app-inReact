@@ -15,7 +15,8 @@ import SearchIcon from '@mui/icons-material/Search';
 // import SearchNotes from "./components/SearchNotes"
 import Tooltip from '@mui/material/Tooltip';
 import LogoutIcon from '@mui/icons-material/Logout';
-
+import WeeklyTask from "./components/Weeklytask"
+import SearchNoteText from "./components/SearchNoteText"
 
 export default function App() {
 
@@ -24,6 +25,7 @@ export default function App() {
 	const [refreshNoteData, setRefreshNoteData] = React.useState(false)
 	const [selectedNote, setSelectedNote] = React.useState(null)
 	const [selectedNoteData, setSelectedNoteData] = React.useState(null)
+	const [bookmarkedNoteIds, setBookmarkedNoteIds] = React.useState([])
 
 	const [search, setSearch] = React.useState(false);
 
@@ -31,6 +33,7 @@ export default function App() {
 
 	React.useEffect(() => {          // this will fetch all the notes present in the database 
 		const token = localStorage.getItem("access_token")
+
 		async function getNotes() {
 			const response = await fetch("http://127.0.0.1:5000/getNotes", {
 				method: 'GET',
@@ -44,12 +47,36 @@ export default function App() {
 			setNotes(data.notes);
 			setFolder(data.folders);
 			// setRefreshNoteData(false)
-
 		}
+		async function getBookmarkedIds() {
+			try {
+				const response = await fetch("http://127.0.0.1:5000/getBookmarkedId", {
+					method: 'GET',
+					headers: {
+						'Content-type': 'application/json; charset=UTF-8',
+						'Authorization': `Bearer ${token}`
+					}
+				});
+
+				if (response.ok) {
+					const data = await response.json();
+					console.log(data);
+          setBookmarkedNoteIds(data);
+				} else {
+					console.error('Failed to fetch bookmarked note IDs');
+				}
+			} catch (error) {
+				console.error('Error fetching bookmarked note IDs:', error);
+			}
+		}
+
+
 		getNotes()
+		getBookmarkedIds();
+
 
 	}, [])
-
+	console.log(bookmarkedNoteIds);
 
 	React.useEffect(() => {          // this will fetch all the notes present in the database 
 		const token = localStorage.getItem("access_token")
@@ -99,17 +126,41 @@ export default function App() {
 		setSplitSize(prevSize => (prevSize[0] === 20 ? [0, 120] : [20, 100]))
 	}
 
-	const logout = ()=>{
+	const logout = () => {
 		localStorage.clear()
 		fetch("http://127.0.0.1:5000/logout", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-			navigate("/login")
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			}
+		})
+		navigate("/login")
 	}
 
+
+	const fetchBookmarkedNotes = async () => {
+		const token = localStorage.getItem("access_token")
+		try {
+			const response = await fetch(`http://localhost:5000/getBookmarkedNotes`, {
+				method: 'GET',
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			});
+			if (!response.ok) {
+				throw new Error('Failed to fetch bookmarked notes');
+			}
+			const data = await response.json();
+			console.log(data);
+			setNotes(data.notes);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	const handleBookmarkClick = () => {
+		fetchBookmarkedNotes();
+	};
 
 
 
@@ -128,18 +179,21 @@ export default function App() {
 				</div>
 
 				<Tooltip title="bookmark" placement="right">
-					<BookmarkBorderOutlinedIcon className="bookmark-icon" />
+					<BookmarkBorderOutlinedIcon onClick={() => handleBookmarkClick()} className="bookmark-icon" />
 				</Tooltip>
 
 				<Tooltip title="search" placement="right">
 					<SearchIcon className="search-icon" onClick={() => { setSearch(prev => !prev) }} />
 				</Tooltip>
 
+
+				<WeeklyTask />
+				<SearchNoteText setSelectedNote={setSelectedNote} />
+
 				<FormDialog />
 				<NotificationsCheck />
-
 				<Tooltip title="logout" placement="right">
-					<LogoutIcon className="logout-icon"  onClick={logout} />
+					<LogoutIcon className="logout-icon" onClick={logout} />
 				</Tooltip>
 
 			</div>
@@ -164,6 +218,7 @@ export default function App() {
 					selectedNoteData={selectedNoteData}
 					setSelectedNoteData={setSelectedNoteData}
 					setRefreshNoteData={setRefreshNoteData}
+					bookmarkedNoteIds={bookmarkedNoteIds}
 				/>
 
 			</Split>

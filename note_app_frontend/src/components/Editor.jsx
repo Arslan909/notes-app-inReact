@@ -1,52 +1,54 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import "../editor.css";
 import remarkGfm from 'remark-gfm';
 import axios from 'axios';
 import Tooltip from '@mui/material/Tooltip';
-
+import { MDXEditor, headingsPlugin, listsPlugin, quotePlugin, thematicBreakPlugin, linkPlugin, imagePlugin } from '@mdxeditor/editor';
+import '@mdxeditor/editor/style.css';
 
 export default function Editor(props) {
-	const [notePadView, setNotePadView] = React.useState(true);
+	const [notePadView, setNotePadView] = useState(true);
+	const [tabs, setTabs] = useState([]);
+	const [selectedTab, setSelectedTab] = useState(null);
+	const [editorValue, setEditorValue] = useState("");
+	const [updateTimeout, setUpdateTimeout] = useState(null);
+	const [saving, setSaving] = useState(false);
+	const [bookmarked, setBookmarked] = useState(false);
+	const mdxEditorRef = useRef(null);
 
-	const [tabs, setTabs] = React.useState([])
-	const [selectedTab, setSelectedTab] = React.useState(null)
-	const [editorValue, setEditorValue] = React.useState("")
-	const [updateTimeout, setUpdateTimeout] = React.useState(null)
-	const [saving, setSaving] = React.useState(false)
-
+	React.useEffect(()=>{
+		console.log(props.bookmarkedNoteIds);
+	},[])
+	
 
 	if (tabs.length === 0) {
-		newTab()
+		newTab();
 	}
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (props.selectedNoteData != null) {
-			let updatedTabs = [...tabs]
+			let updatedTabs = [...tabs];
 			updatedTabs.map(tab => {
 				if (tab.id === selectedTab) {
-					tab.noteID = props.selectedNoteData.noteId
-					tab.title = props.selectedNoteData.noteName
-					tab.content = props.selectedNoteData.noteDescription
+					tab.noteID = props.selectedNoteData.noteId;
+					tab.title = props.selectedNoteData.noteName;
+					tab.content = props.selectedNoteData.noteDescription;
 				}
-			})
-			setTabs(updatedTabs)
-
+			});
+			setTabs(updatedTabs);
 		}
-	}, [props.selectedNoteData])
+	}, [props.selectedNoteData]);
 
-	// React.useEffect(() => {
-	// 	console.log("selected tab is " + selectedTab);
-	// 	tabs.map(ele => {
-	// 		if (ele.id === selectedTab) {
-	// 			console.log("selected tab content id is " + ele.content)
-	// 		}
-	// 	})
-	// 	console.log(props.selectedNoteData);
-
-	// }, [selectedTab, props.selectedNoteData])
-
+	useEffect(() => {
+		tabs.map(tab => {
+			if (tab.id === selectedTab) {
+				setEditorValue(tab.content);
+				mdxEditorRef.current?.setMarkdown(tab.content);
+			}
+		});
+	}, [selectedTab, tabs]);
 
 	function newTab() {
 		let newTab = {
@@ -54,54 +56,39 @@ export default function Editor(props) {
 			title: "New Tab",
 			content: "",
 			noteID: null
-		}
-		setTabs([...tabs, newTab])
-		setSelectedTab(newTab.id)
-		props.setSelectedNoteData(null)
-
+		};
+		setTabs([...tabs, newTab]);
+		setSelectedTab(newTab.id);
+		props.setSelectedNoteData(null);
 	}
 
 	function chnageView() {
 		setNotePadView(!notePadView);
 	}
 
-	// function closeTab(tabId) {
-	//     // setSelectedTab(1)
-	//     const updatedTabs = tabs.filter(tab => tab.id !== tabId);
-	//     setTabs(updatedTabs);
-	// }
-	// // console.log(tabs);
-
+	// tabs component
 	const editorTab = tabs.map(tab => (
 		<div
 			key={tab.id}
 			className={tab.id === selectedTab ? 'selected-editor-tab' : 'editor-tab'}
 			onClick={() => { setSelectedTab(tab.id) }}
 		>
-
 			<li>{tab.title}</li>
-			<button onClick={() => closeTab(tab.id)}> X </button>
-			{/* <button> X </button> */}
-
+			<button onClick={(e) => { e.stopPropagation(); closeTab(tab.id); }}> X </button>
 		</div>
-	))
+	));
 
-	React.useEffect(() => {
-		tabs.map(tab => {
-			if (tab.id === selectedTab) {
-				setEditorValue(tab.content)
-			}
-		})
-	}, [selectedTab, tabs])
-
-	function handelChange(event) {
-		const noteContent = event.target.value;
+	function handleChange(updatedMarkdown) {
+		const noteContent = updatedMarkdown || mdxEditorRef.current?.getMarkdown();
 		let noteID = null;
+		let noteTitle = noteContent.split('\n')[0].replace(/^[# ]+/, '') || "Untitled";
+
 		tabs.forEach(tab => {
 			if (tab.id === selectedTab) {
 				tab.content = noteContent;
 				setEditorValue(noteContent);
 				noteID = tab.noteID;
+				tab.title = noteTitle;
 			}
 		});
 
@@ -112,49 +99,141 @@ export default function Editor(props) {
 
 		const data = {
 			noteId: noteID,
-			noteContent: noteContent
-		}
+			noteContent: noteContent,
+			note_Title: noteTitle
+		};
 
-		setSaving(true)
+		setSaving(true);
 		if (updateTimeout) {
-			clearTimeout(updateTimeout)
+			clearTimeout(updateTimeout);
 		}
 
 		const newTimeout = setTimeout(() => {
-			axios.post('http://127.0.0.1:5000/updateNoteDescription', data)
+			axios.post('http://127.0.0.1:5000/updateNoteDescription', data,
+				{
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
+				})
 				.then(res => {
 					console.log(res.data.message);
 					if (res.statusText === "OK") {
-						setSaving(false)
-						props.setRefreshNoteData(prev => !prev)
+						setSaving(false);
+						props.setRefreshNoteData(prev => !prev);
 					}
 				})
 				.catch(error => {
-					console.error('Error:', error)
-				})
-		}, 1000)
+					console.error('Error:', error);
+				});
+		}, 1000);
 
-		setUpdateTimeout(newTimeout)
+		setUpdateTimeout(newTimeout);
 	}
 
 	function closeTab(tabId) {
-		const updatedTabs = tabs.filter(tab => tab.id !== tabId)
-		let deletedTabIndex = tabs.findIndex(tab => tab.id === tabId)
-		console.log(deletedTabIndex)
-		let temp = selectedTab
+		const updatedTabs = tabs.filter(tab => tab.id !== tabId);
+		let deletedTabIndex = tabs.findIndex(tab => tab.id === tabId);
+		let temp = selectedTab;
 
-		if(deletedTabIndex > 0 && updatedTabs.length > 0){
-			temp = updatedTabs[deletedTabIndex -1].id
-			console.log(temp);
-		}else if(updatedTabs.length > 0 &&deletedTabIndex == 0){
-			temp = updatedTabs[0].id
-			console.log(temp)
+		if (deletedTabIndex > 0 && updatedTabs.length > 0) {
+			temp = updatedTabs[deletedTabIndex - 1].id;
+		} else if (updatedTabs.length > 0 && deletedTabIndex == 0) {
+			temp = updatedTabs[0].id;
 		}
-		setTabs(updatedTabs)
-		setSelectedTab(temp)
-		console.log(selectedTab)
+		setTabs(updatedTabs);
+		setSelectedTab(temp);
+		console.log(props.selectedNoteData);
+		// props.setSelectedNoteData(null);
+
 	}
-	// console.log(selectedTab)
+
+	const token = localStorage.getItem("access_token");
+	function addBookmark(noteId) {
+		axios.post('http://127.0.0.1:5000/addBookmark',
+			{ noteId },
+			{
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			}
+		)
+			.then(res => {
+				console.log(res.data.message);
+				if (res.status === 200) {
+					setBookmarked(true);
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
+	}
+
+	function removeBookmark(noteId) {
+		axios.post('http://127.0.0.1:5000/removeBookmark',
+			{ noteId },
+			{
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			}
+		)
+			.then(res => {
+				console.log(res.data.message);
+				if (res.status === 200) {
+					setBookmarked(false);
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
+	}
+
+	useEffect(() => { //custom editor shite! i am not proud of it
+		function handleKeyDown(event) {
+			if (event.key === 'Enter' && event.shiftKey) {
+				event.preventDefault();
+				// mdxEditorRef.current.insertMarkdown("\n ");
+				mdxEditorRef.current.insertMarkdown("  ");
+				// mdxEditorRef.current.insertMarkdown("\n");
+				console.log("shitf inserted");
+
+			} else if (event.key === 'Enter') {
+				event.preventDefault();
+				handleGetMarkdown()
+				console.log("inserted");
+				mdxEditorRef.current.insertMarkdown("\n");
+			}
+		}
+		document.addEventListener('keydown', handleKeyDown);
+
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, []);
+
+	function handleSetMarkdown() {
+		mdxEditorRef.current?.setMarkdown("");
+		if (mdxEditorRef.current) {
+			mdxEditorRef.current.focus(null, { defaultSelection: "rootStart" });
+		}
+	}
+
+	function handleGetMarkdown() {
+		const currentMarkdown = mdxEditorRef.current?.getMarkdown();
+		if (currentMarkdown) {
+			const updatedMarkdown = currentMarkdown.replace(/\\/g, '');
+			handleSetMarkdown()
+			handleInsertMarkdown(updatedMarkdown)
+
+		}
+	}
+
+	function handleInsertMarkdown(content) {
+		mdxEditorRef.current.insertMarkdown(content);
+		if (mdxEditorRef.current) {
+			mdxEditorRef.current.focus(null, { defaultSelection: "rootEnd" });
+		}
+	}
 
 	return (
 		<div className="editor-side-master-container">
@@ -164,9 +243,7 @@ export default function Editor(props) {
 			</div>
 
 			<div className="editor-side">
-
 				<div className="note-pad-head">
-
 					<h3 className='note-heading'>
 						{tabs.length !== 0
 							? tabs.map(ele => ele.id === selectedTab ? ele.title : null)
@@ -174,6 +251,7 @@ export default function Editor(props) {
 						}
 					</h3>
 
+ 
 					<div className="heading-control">
 						{
 							props.selectedNoteData
@@ -182,8 +260,7 @@ export default function Editor(props) {
 										<i className={saving ? "nf nf-md-database_sync_outline" : "nf nf-md-database_check_outline"}> </i>
 									</Tooltip>
 
-									<Tooltip title="view mode">
-
+									<Tooltip title={notePadView ? "view mode" : "edit mode"}>
 										<button onClick={chnageView} className='notepad-view-btn'>
 											{notePadView
 												? <i className='nf nf-oct-book notepad-view-icon'></i>
@@ -191,26 +268,30 @@ export default function Editor(props) {
 										</button>
 									</Tooltip>
 
+									<Tooltip title={bookmarked ? "Remove Bookmark" : "Add Bookmark"}>
+										<i className={bookmarked && props.bookmarkedNoteIds.includes(props.selectedNoteData.noteId) ? "nf nf-oct-bookmark_fill" : "nf nf-oct-bookmark"}
+											onClick={() => { bookmarked ? removeBookmark(props.selectedNoteData.noteId) : addBookmark(props.selectedNoteData.noteId) }}>
+										</i>
+									</Tooltip>
 								</>)
 								: null
 						}
-
 					</div>
-
 				</div>
 
 				{props.selectedNoteData !== null ?
 					<>
 						{notePadView
 							?
-							<textarea
-								value={editorValue}
-								className='note-pad-textarea'
-								onChange={handelChange}
-								name="note-pad-textarea"
-							></textarea>
+							<MDXEditor
+								ref={mdxEditorRef}
+								markdown={editorValue}
+								plugins={[headingsPlugin(), listsPlugin(), quotePlugin(), thematicBreakPlugin(), linkPlugin(), imagePlugin()]}
+								className="note-pad-textarea"
+								onChange={handleChange}
+							/>
 							:
-							<ReactMarkdown className="note-pad-viewarea" remarkPlugins={[remarkGfm]} >
+							<ReactMarkdown className="note-pad-viewarea" remarkPlugins={[remarkGfm]}>
 								{editorValue}
 							</ReactMarkdown>
 						}
@@ -223,13 +304,12 @@ export default function Editor(props) {
 				}
 			</div>
 		</div>
-
 	);
 }
 
 Editor.propTypes = {
-
 	selectedNoteData: PropTypes.object,
 	setSelectedNoteData: PropTypes.func,
 	setRefreshNoteData: PropTypes.func,
+	bookmarkedNoteIds: PropTypes.array,
 };

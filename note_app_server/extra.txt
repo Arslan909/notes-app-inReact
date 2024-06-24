@@ -13,3 +13,28 @@
 #         user = User(user_data[0], user_data[1])
 #         return user
 #     return None
+
+
+
+
+
+# @app.route("/getWeeklyReport", methods=["GET"])
+# @jwt_required()
+# def getWeeklyReport():
+#     userId = get_jwt_identity()
+
+#     try:
+#         cur = mysql.connection.cursor()
+#         cur.execute("CALL getWeeklyReport(%s)", (userId,))
+#         report = []
+#         for row in cur.fetchall():
+#             temp = {
+#                 'week': row[0],
+#                 'done_tasks': row[1],
+#                 'total_tasks': row[2]
+#             }
+#             report.append(temp)
+#         print(report)
+#         return jsonify(report), 200
+#     except Exception as e:
+#         return jsonify({"message": f"Error occurred in execution {e}"}), 500

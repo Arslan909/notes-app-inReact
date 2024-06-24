@@ -1,0 +1,501 @@
+use notes_app_3;
+
+CREATE TABLE Login( 
+    userId INT PRIMARY KEY UNIQUE AUTO_INCREMENT,
+    username VARCHAR(500),
+    password VARCHAR(500)
+);
+
+select * from Login;
+
+CREATE TABLE Notes(
+	ID INT PRIMARY KEY UNIQUE AUTO_INCREMENT,
+	noteId INT,
+    userId INT,
+    noteName VARCHAR(500),
+    NoteDescription TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    folder_id INT,
+    FOREIGN KEY(userId) REFERENCES Login(userId),
+	FOREIGN KEY (folder_id) REFERENCES Folders(id) ON DELETE CASCADE
+);
+
+CREATE TABLE Folders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    folderId INT,
+    userId INT,
+    folderName VARCHAR(500),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE Notifications (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    sender VARCHAR(500),
+    receiver VARCHAR(500),
+    status VARCHAR(45) NULL DEFAULT 'pending',
+    privilege VARCHAR(45) NULL
+);
+select * from Notifications;
+
+
+
+
+CREATE TABLE Task(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    userId INT,
+    taskContent VARCHAR(500),
+    status VARCHAR(45),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY(userId) REFERENCES Login(userId)
+);
+
+ -- ---------------------------------------------------------------
+ 
+DELIMITER $$
+CREATE PROCEDURE signUp(
+    IN fname VARCHAR(500),
+    IN uname VARCHAR(500), 
+    IN pwd VARCHAR(500)
+)
+BEGIN
+     DECLARE user_count INT;
+     SELECT COUNT(*) INTO user_count FROM Login WHERE username = uname;
+
+    IF user_count = 0 THEN
+        INSERT INTO Login(username, password, full_name) VALUES(uname, pwd, fname);
+        SELECT "success" as status, "User created" as message;
+    ELSE
+        SELECT "unsuccessful" as status, "Username already exists" AS message;
+    END IF;
+    
+END $$
+DELIMITER ;
+
+
+CALL signUp("test","u5", "p1")
+select * from Login
+ 
+DELIMITER $$
+CREATE PROCEDURE checkLogin(
+	IN uname VARCHAR(500), 
+    IN pwd VARCHAR(500)
+)
+BEGIN
+  SELECT userId AS userId
+  FROM Login
+  WHERE username = uname AND password = pwd;
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE newNote(
+	IN user_id INT,
+    IN note_Name VARCHAR(500),
+    IN Note_Description TEXT,
+    IN in_folder_id INT
+)
+BEGIN
+	INSERT INTO Notes(userId, noteName, NoteDescription,folder_id) VALUES(user_id, note_Name, Note_Description, in_folder_id);
+END $$
+DELIMITER ;
+
+Select * from Notes
+
+
+
+DELIMITER $$
+CREATE PROCEDURE createFolder(
+	IN in_userId INT,
+    IN in_folderName VARCHAR(500)
+)
+BEGIN
+	INSERT INTO Folders(userId, folderName) VALUES(in_userId, in_folderName);
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE getNotes(
+	IN user_Id INT
+)
+BEGIN
+	SELECT ID, noteName, NoteDescription, folder_id
+    FROM Notes
+    WHERE userId = user_Id;
+END $$
+DELIMITER ;
+
+call getNotes(4)
+select * from Notes
+
+DELIMITER $$
+CREATE PROCEDURE getFolders(
+	IN user_Id INT
+)
+BEGIN
+	SELECT ID, folderName
+    FROM Folders
+    WHERE userId = user_Id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE deleteNote(
+	IN user_id INT,
+	IN note_Id INT
+)
+BEGIN
+	DELETE FROM Notes
+	WHERE userId = user_id  And ID = note_Id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE deleteFolder(
+	IN user_id INT,
+	IN folder_Id INT
+)
+BEGIN
+	DELETE FROM Folders
+	WHERE userId = user_id  And ID = folder_Id;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE RenameFolder(
+    IN user_id INT,
+    IN folder_Id INT,
+    IN new_folderName VARCHAR(500)
+)
+BEGIN
+    UPDATE Folders
+    SET folderName = new_folderName, updated_at = CURRENT_TIMESTAMP
+    WHERE userId = user_id AND id = folder_Id;
+END $$
+DELIMITER ;
+
+
+
+
+DELIMITER $$
+CREATE PROCEDURE searchUser(
+    IN uname VARCHAR(500)
+)
+BEGIN
+    SELECT userId, username  FROM Login WHERE username = uname;
+END $$
+DELIMITER ;
+
+CALL searchUser
+
+
+DELIMITER $$
+CREATE PROCEDURE allUsers(
+)
+BEGIN
+    SELECT userId, username  FROM Login;
+END $$
+DELIMITER ;
+
+CALL allUsers
+
+DELIMITER $$
+CREATE PROCEDURE sendNotification(
+    IN in_sender INT,
+    IN in_receiver INT,
+    IN in_status VARCHAR(500),
+    IN in_privilege VARCHAR(500)
+)
+BEGIN
+    DECLARE notificationCount INT;
+    SELECT COUNT(*) INTO notificationCount
+    FROM Notifications
+    WHERE sender = in_sender
+      AND receiver = in_receiver
+      AND status = 'pending';
+
+    IF notificationCount = 0 THEN
+        INSERT INTO Notifications(sender, receiver, status, privilege)
+        VALUES (in_sender, in_receiver, in_status, in_privilege);
+    END IF;
+    
+END $$
+DELIMITER ;
+
+select * from Notifications;
+CALL sendNotification;
+
+
+DELIMITER $$
+CREATE PROCEDURE notificationAlert(
+    IN in_userId INT
+)
+BEGIN
+    SELECT l.userId AS senderId, l.username AS senderUsername
+    FROM Notifications n
+    INNER JOIN Login l ON n.sender = l.userId
+    WHERE n.receiver = in_userId
+      AND n.status = 'pending';
+
+END $$
+DELIMITER ;
+
+
+call notificationAlert(5)
+
+
+DELIMITER $$
+CREATE PROCEDURE acceptInvitation(
+    IN in_sender INT,
+    IN in_receiver INT
+)
+BEGIN
+    UPDATE Notifications
+    SET status = 'accept'
+    WHERE sender = in_sender
+      AND receiver = in_receiver
+      AND status = 'pending';
+
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE rejectInvitation(
+    IN in_sender INT,
+    IN in_receiver INT
+)
+BEGIN
+    UPDATE Notifications
+    SET status = 'reject'
+    WHERE sender = in_sender
+      AND receiver = in_receiver
+      AND status = 'pending';
+
+END $$
+DELIMITER ;
+
+select * from Notifications
+
+
+DELIMITER $$
+CREATE PROCEDURE defaultProfile(
+    IN in_userId INT
+)
+BEGIN
+	select userId, username
+    from Login
+    where userId = in_userId;
+
+END $$
+DELIMITER ;
+
+call defaultProfile(4)
+
+DELIMITER $$
+CREATE PROCEDURE sharedSpaces(
+    IN in_userId INT
+)
+BEGIN    
+	SELECT l.userId, l.username, n.privilege
+    FROM Notifications n
+    INNER JOIN Login l ON n.sender = l.userId
+    WHERE n.receiver = in_userId
+      AND n.status = 'accept';
+      
+END $$
+DELIMITER ;
+
+call sharedSpaces(4)
+
+DELIMITER $$
+CREATE PROCEDURE UpdateNoteDescription(
+    IN in_noteId INT,
+    IN in_userId INT,
+    IN in_noteDescription TEXT,
+    IN in_noteTitle VARCHAR(500)
+)
+BEGIN
+    UPDATE Notes
+    SET 
+		noteName = in_noteTitle,
+		NoteDescription = in_noteDescription,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE ID = in_noteId AND userId = in_userId;
+END $$
+DELIMITER ;
+
+CALL UpdateNoteDescription(10, 4, "new note description...1");
+
+
+DELIMITER $$
+CREATE PROCEDURE searchNotes
+(
+	IN searchQuery VARCHAR(255),
+    IN in_userId INT
+)
+BEGIN
+    SELECT ID, noteName, NoteDescription, folder_id 
+    FROM Notes 
+    WHERE noteName LIKE CONCAT('%', searchQuery, '%') and userId = in_userId;
+END $$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE PROCEDURE leaveWorkspace(
+    IN in_sender INT,
+    IN in_receiver INT
+)
+BEGIN
+    DELETE FROM Notifications
+    WHERE sender = in_sender
+      AND receiver = in_receiver
+      AND status = 'accept';
+
+END $$
+DELIMITER ;
+
+select * from Notifications;
+
+
+
+DELIMITER $$
+CREATE PROCEDURE AddBookmark(
+    IN in_userId INT,
+    IN in_noteId INT
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM Bookmarks WHERE userId = in_userId AND noteId = in_noteId
+    ) THEN
+        INSERT INTO Bookmarks (userId, noteId) VALUES (in_userId, in_noteId);
+    END IF;
+END $$
+DELIMITER ;
+call AddBookmark(1,5);
+
+select * from Bookmarks;
+
+DELIMITER $$
+CREATE PROCEDURE getBookmarkedNotes(
+    IN in_userId INT
+)
+BEGIN
+    SELECT Notes.ID, Notes.noteName, Notes.NoteDescription, Notes.folder_id
+    FROM Notes
+    JOIN Bookmarks ON Bookmarks.noteId = Notes.ID
+    WHERE Bookmarks.userId = in_userId;
+END $$
+DELIMITER ;
+
+call getBookmarkedNotes(4)
+
+
+DELIMITER $$
+CREATE PROCEDURE DeleteBookmark(
+    IN in_userId INT,
+    IN in_noteId INT
+)
+BEGIN
+    DELETE FROM Bookmarks WHERE userId = in_userId AND noteId = in_noteId;
+END $$
+DELIMITER ;
+
+
+
+DELIMITER $$
+CREATE PROCEDURE addTask(
+    IN in_userId INT,
+    IN in_noteContent varchar(500)
+)
+BEGIN
+    INSERT INTO Task (userId, taskContent) VALUES (in_userId, in_noteContent);
+END $$
+
+DELIMITER 
+
+call addTask(4, "task 1")
+
+
+DELIMITER $$
+CREATE PROCEDURE getTask(
+	in_userId INT 
+)
+BEGIN
+    SELECT * FROM Task WHERE userId = in_userId AND status != 'done';
+END $$
+
+DELIMITER ;
+
+call getTask(4);
+SELECT * FROM Task 
+
+DELIMITER $$
+CREATE PROCEDURE deleteTask(
+    IN in_userId INT,
+    IN in_taskId INT
+)
+BEGIN
+    DELETE FROM Task WHERE userId = in_userId AND id = in_taskId;
+END $$
+
+DELIMITER ;
+call deleteTask(4,3)
+
+
+
+DELIMITER $$
+CREATE PROCEDURE getWeeklyReport(in_userId INT)
+BEGIN
+    SELECT 
+        YEARWEEK(created_at) as week,
+        COUNT(CASE WHEN status = 'done' THEN 1 END) as done_tasks,
+        COUNT(*) as total_tasks
+    FROM Task 
+    WHERE userId = in_userId
+    GROUP BY YEARWEEK(created_at);
+END $$
+DELIMITER ;
+
+call getWeeklyReport(4)
+
+
+
+
+
+
+
+
+
+
+-- Inserting data into the Login table
+-- INSERT INTO Login (username, password) VALUES
+-- ('u3', 'p3'),
+-- ('u4', 'p4');
+
+-- -- Inserting data into the Folders table
+-- INSERT INTO Folders (userId, folderName) VALUES
+-- (1, 'Folder 1'),
+-- (1, 'Folder 2'),
+-- (4, 'Folder 3');
+
+-- -- Inserting data into the Notes table
+-- INSERT INTO Notes (userId, noteName, NoteDescription, folder_id) VALUES
+-- (1, 'Note 2', 'Description for Note 1', 1),
+-- (1, 'Note 3', 'Description for Note 2', 1),
+-- (1, 'Note 4', 'Description for Note 3', 2),
+-- (4, 'Note 1', 'Description for Note 1', 3);
+
+
+select * from Login;
+select * from Notes;
+select * from Folders;
+select * from Notifications;
+
+
+select ID, noteName, NoteDescription from Notes where userId = 4
+

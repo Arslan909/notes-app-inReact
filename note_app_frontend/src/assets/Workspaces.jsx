@@ -90,11 +90,12 @@ export default function Workspaces(props) {
 
   }
 
-  const leaveWorkspace = (profile) => {
+  const leaveWorkspace = (event, profile) => {
+    event.stopPropagation(); 
     console.log(profile);
     const profileData = {
       "userId": profile.userId
-    }
+    };
 
     fetch("http://127.0.0.1:5000/leaveWorkspace", {
       method: "POST",
@@ -104,15 +105,19 @@ export default function Workspaces(props) {
         'Authorization': `Bearer ${token}`
       }
     })
-      .then(res => {
-        if (res.ok) {
-          handleClose()
-          return res.json()
-        }
-      })
-    console.log("burrrrrrrr");
-
-  }
+    .then(res => {
+      if (res.ok) {
+        handleClose();
+        props.setPrivilege(null);
+        handleSelectProfile(defaultProfile)
+        console.log("burrrrrrrr");
+        return res.json();
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  };
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
@@ -152,7 +157,7 @@ export default function Workspaces(props) {
                 <Typography onClick={() => { handleSelectProfile(profile) }} >Workspace {profile.userEmail}</Typography>
                 <span>{(profile.userEmail === currentProfile.userEmail ? "✓" : "")}</span>
 
-                <ExitToAppIcon onClick={() => { leaveWorkspace(profile) }} sx={{ color: "#dbdbda" }} />
+                <ExitToAppIcon onClick={(event) => { leaveWorkspace(event, profile) }} sx={{ color: "#dbdbda" }} />
               </div>
             ))}
           </div>

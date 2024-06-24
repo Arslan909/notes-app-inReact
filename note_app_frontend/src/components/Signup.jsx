@@ -42,7 +42,8 @@ export default function Login() {
           throw new Error(data.error);
         }
         // console.log(data);
-        navigate('/login');
+        // navigate('/login');
+        navigate('/');
       })
       .catch(error => {
         console.error("Error:", error.message);

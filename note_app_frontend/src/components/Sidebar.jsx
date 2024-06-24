@@ -6,6 +6,8 @@ import Workspaces from "../assets/Workspaces"
 import SearchNotes from './SearchNotes';
 import SortNote from '../assets/SortNote';
 
+import RenameFolder from "../assets/RenameFolder"
+
 export default function Sidebar(props) {
     const [expandFolder, setExpandFolder] = React.useState([])
     const [sharedFetching, setSharedFetching] = React.useState(false)
@@ -83,9 +85,9 @@ export default function Sidebar(props) {
                                 <span>
                                     {expandFolder.includes(folder.folderId)
                                         ?
-                                        <i className='nf nf-cod-chevron_down'></i>
+                                        <i className='nf nf-cod-chevron_down'> </i>
                                         :
-                                        <i className='nf nf-cod-chevron_right'></i>
+                                        <i className='nf nf-cod-chevron_right'> </i>
                                     }
                                 </span>
                                 {folder.folderName}
@@ -97,6 +99,11 @@ export default function Sidebar(props) {
                             onClick={() => { createFolderNote(folder.folderId) }}>
                             <i className='nf nf-cod-new_file delete-icon' ></i>
                         </button>
+
+                        <RenameFolder 
+                            folderId={folder.folderId} 
+                            setRefreshNoteData={props.setRefreshNoteData}
+                        />
                         <button
                             className='note-del-btn'
                             onClick={() => { deleteFolder(folder.folderId) }}>
@@ -135,6 +142,28 @@ export default function Sidebar(props) {
         const data = {
             noteName: `New Note ${temp}`,
             noteDescription: "# Tittle",
+            folderId: null,
+        }
+
+        try {
+            const response = await axios.post('http://127.0.0.1:5000/newNotes', data, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            console.log(response.data);
+            props.setRefreshNoteData(prev => !prev)
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    async function currentDateNote() {
+        let currentDate = new Date().toLocaleDateString()
+        console.log(currentDate);
+        const data = {
+            noteName: `${currentDate}`,
+            noteDescription: `# ${currentDate}`,
             folderId: null,
         }
 
@@ -240,8 +269,18 @@ export default function Sidebar(props) {
         <>
             <div className="side-bar" style={{ display: props.splitSize[0] === 20 ? 'flex' : 'none' }}>
 
-                <div className="toggle-sidebar">
+                <div className="top-menu-sidebar">
                     {/* <h4>area at the top of side bar for no reason at all</h4> */}
+                    <button className='top-sidebar-btn' disabled={privilege === "read_only"} onClick={() => { props.setRefreshNoteData(prev => !prev) }}>
+                        <i className="nf nf-oct-file_directory top-sidebar-options" ></i>
+
+
+                    </button>
+                    <button className='top-sidebar-btn' disabled={privilege === "read_only"} onClick={currentDateNote}>
+                    <i className="nf nf-md-file_plus_outline top-sidebar-options"  ></i>
+
+
+                    </button>
                 </div>
                 {
                     props.search
@@ -265,12 +304,12 @@ export default function Sidebar(props) {
                                 <i className="nf nf-md-arrow_expand new-folder-icon"></i>
 
                             </button>
-                        
+
                         </header>
                 }
 
                 <div className="notes-list">
-                    {sharedFetching ? <h3>TeamsWorkSpace</h3> : null}
+                    {sharedFetching ? <h3 className='heading-teamspace'>Teams Workspace</h3> : null}
                     <h3>{noteList}</h3>
                     <h3>{folderList}</h3>
                 </div>
@@ -283,7 +322,7 @@ export default function Sidebar(props) {
                         </h3>
 
                         :
-                        <h3></h3>
+                        null
                     }
 
                     <Workspaces

@@ -1,14 +1,21 @@
 react tasks:
-  
+
+  - intergrate editor after setting css (done if not new panga )
+  - bookmark icon display check (aaaaaaaaaaaaaaaaa)
+  - weekly planner - front end todo - report part left 
+
   - remove person from workspace/ show whom you have share with  
-  - bookmark notes
+  
   - fix landing page 
   - fix css 
+  - read only test
+  - test signup checks
   
 Flask task:
+  - fix token expire
+  - weekly planner - backend end todo
 
   
-
 Extra:
   - integrate some Ai model to assist in writing notes
   - real time markdown rendering
@@ -33,3 +40,5 @@ Done task:
   - fix landing login signup page design
   - add logout button
   - fix user session and jwt maybe (this time for real)
+  - bookmark notes
+  - bookmark shite - front end todo

@@ -1,13 +1,13 @@
-import React from 'react'
+// import React from 'react'
 import Login from "./components/Login.jsx"
 import Signup from "./components/Signup.jsx"
-import "./Landing.css"
+// import "./Landing.css"
 
 const Landing = () => {
   return (
-    <div className='landing-container'>
-      <Signup/>
+    <div >
       <Login/>
+      <Signup/>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-#!/home/arslan/programming/note_app_test/note_app_server/venv/bin/python
+#!/home/arslan/programming/note_app_test/note_app_server/venv/bin/python3.12
 # -*- coding: utf-8 -*-
 import re
 import sys
