@@ -101,7 +101,7 @@ export default function Login() {
         // required
         />
         <button type="submit">Sign up</button>
-        <p className="create-account-text">Already have an account? <span><Link to="/login" className="sign-up-link">Sign in</Link></span></p>
+        <p className="create-account-text">Already have an account? <span><Link to="/" className="sign-up-link">Sign in</Link></span></p>
       </form>
     </div>
   );

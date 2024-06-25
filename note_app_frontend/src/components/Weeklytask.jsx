@@ -15,7 +15,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
 import EventNoteOutlinedIcon from '@mui/icons-material/EventNoteOutlined';
 import { BarChart } from '@mui/x-charts/BarChart';
-import { Typography } from '@mui/material';
+import { Typography, colors } from '@mui/material';
+
+import "./Css/weeklyPlanner.css";
 
 export default function WeeklyTask() {
   const [open, setOpen] = useState(false);
@@ -55,7 +57,6 @@ export default function WeeklyTask() {
       setOverdueTasks(overdueTasks);
       setOpen(true);
 
-      // Fetch the weekly report data
       const reportResponse = await axios.get('http://127.0.0.1:5000/getWeeklyReport', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -151,83 +152,138 @@ export default function WeeklyTask() {
       </Tooltip>
 
       <Dialog
+        className='planer-main'
         open={open}
         onClose={handleClose}
         PaperProps={{
-          component: 'form',
-          onSubmit: event => {
-            event.preventDefault();
-            const formData = new FormData(event.currentTarget);
-            const formJson = Object.fromEntries(formData.entries());
-            const email = formJson.email;
-            console.log(email);
-            handleClose();
-          },
           style: {
-            minWidth: '700px',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            minWidth: '1500px', 
+            borderRadius: "10px",
+            backgroundColor: "#1f1e1f",
+            color: "white",
+            border: "0.1rem solid #9f9e9f"
           },
         }}
       >
-        <DialogTitle>Weekly Planner</DialogTitle>
-        <DialogContent>
-          <DialogContentText>Keep track of your weekly tasks</DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            name="email"
-            placeholder="Add task"
-            type="search"
-            fullWidth
-            variant="standard"
-            value={searchText}
-            onChange={handleSearchChange}
-          />
-          <Button onClick={addTask}>Add Task</Button>
-          <DialogContentText>Current Tasks</DialogContentText>
-          <List>
-            {currentTasks.map(task => (
-              <ListItem key={task.id}>
-                <ListItemText primary={task.taskContent} />
-                <IconButton edge="end" aria-label="done" onClick={() => markTaskAsDone(task.id)}>
-                  <CheckIcon />
-                </IconButton>
-                <IconButton edge="end" onClick={() => deleteTask(task.id)}>
-                  <DeleteIcon />
-                </IconButton>
-              </ListItem>
-            ))}
-          </List>
-          {overdueTasks.length > 0 && (
-            <>
-              <DialogContentText>Overdue Tasks</DialogContentText>
-              <List>
-                {overdueTasks.map(task => (
-                  <ListItem key={task.id}>
-                    <ListItemText primary={task.taskContent} />
-                    <IconButton edge="end" aria-label="done" onClick={() => markTaskAsDone(task.id)}>
-                      <CheckIcon />
-                    </IconButton>
-                    <IconButton edge="end" aria-label="delete" onClick={() => deleteTask(task.id)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItem>
-                ))}
-              </List>
-            </>
-          )}
-          <DialogContentText>Weekly Report</DialogContentText>
+        <div className="left-pane" style={{ flex: 1, padding: '20px', borderRight: '1px solid #373736' }}>
+          <DialogTitle sx={{ color: "#885af3", fontWeight: "900" }}>Weekly Planner</DialogTitle>
+          <DialogContent>
+            <DialogContentText sx={{ color: "white", fontWeight: "900" }}>Keep track of your weekly tasks</DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              name="email"
+              placeholder="Add task"
+              type="search"
+              fullWidth
+              variant="standard"
+              value={searchText}
+              onChange={handleSearchChange}
+              InputProps={{
+                sx: {
+                  color: "white",
+                  padding: "10px",
+                  marginBottom: "5px"
+                },
+              }}
+              sx={{
+                '& .MuiInput-underline:before': {
+                  borderBottom: '1px solid #373736',
+                },
+                '& .MuiInput-underline:hover:not(.Mui-disabled):before': {
+                  borderBottom: '1px solid #373736',
+                },
+                '& .MuiInput-underline:after': {
+                  borderBottom: '1px solid #373736',
+                },
+              }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={addTask}
+              sx={{
+                backgroundColor: "#885af3",
+                marginBottom: "5px"
+              }}
+            >Add Task
+            </Button>
+
+            <DialogContentText
+              sx={{
+                color: "#4daf51",
+                fontWeight: "900"
+              }}
+            >
+              Current Tasks
+            </DialogContentText>
+
+            <List>
+              {currentTasks.map(task => (
+                <ListItem key={task.id}>
+                  <ListItemText primary={task.taskContent} />
+                  <IconButton edge="end" aria-label="done" onClick={() => markTaskAsDone(task.id)}>
+                    <CheckIcon sx={{ color: "#885af3" }} />
+                  </IconButton>
+                  <IconButton edge="end" onClick={() => deleteTask(task.id)}>
+                    <DeleteIcon sx={{ color: "white" }} />
+                  </IconButton>
+                </ListItem>
+              ))}
+            </List>
+
+            {overdueTasks.length > 0 && (
+              <>
+                <DialogContentText
+                  sx={{
+                    color: "#f44336",
+                    fontWeight: "900"
+                  }}
+                >
+                  Overdue Tasks
+                </DialogContentText>
+
+                <List>
+                  {overdueTasks.map(task => (
+                    <ListItem key={task.id}>
+                      <ListItemText primary={task.taskContent} />
+                      <IconButton edge="end" aria-label="done" onClick={() => markTaskAsDone(task.id)}>
+                        <CheckIcon sx={{ color: "#885af3" }} />
+                      </IconButton>
+                      <IconButton edge="end" aria-label="delete" onClick={() => deleteTask(task.id)}>
+                        <DeleteIcon sx={{ color: "white" }} />
+                      </IconButton>
+                    </ListItem>
+                  ))}
+                </List>
+              </>
+            )}
+          </DialogContent>
+        </div>
+
+        <div className="right-pane" style={{ flex: 1, padding: '20px',  }}>
+          <DialogContentText sx={{ color: "white", fontWeight: "900" }}>Weekly Report</DialogContentText>
           {weeklyReport.length !== 0 ?
             <BarChart
-              width={600}
-              height={300}
+              width={700}
+              height={400}
               series={[{ data: weeklyReport.map(item => item.percentage) }]}
               xAxis={[{ data: weeklyReport.map(item => item.week), scaleType: 'band' }]}
+              yAxis={[{ valueFormatter: value =>` ${value}%` }]}
+              // barLabel="value"
+              margin={{
+                left: 40,
+                right: 30,
+              }}
             />
             :
-            <Typography variant="body2">No report data available</Typography>
+            <Typography variant="body2" sx={{ color: "white" }}>No report data available</Typography>
           }
-        </DialogContent>
+        </div>
       </Dialog>
     </React.Fragment>
   );

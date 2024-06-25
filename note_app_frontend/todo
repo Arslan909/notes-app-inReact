@@ -1,19 +1,16 @@
 react tasks:
 
-  - intergrate editor after setting css (done if not new panga )
-  - bookmark icon display check (aaaaaaaaaaaaaaaaa)
-  - weekly planner - front end todo - report part left 
-
-  - remove person from workspace/ show whom you have share with  
   
-  - fix landing page 
+  - weekly planner - front end todo  css 
+
+  - remove person from workspace/ show whom you have shared with (not karing) 
+  
   - fix css 
-  - read only test
-  - test signup checks
+
+  - test signup checks/ login 
   
 Flask task:
-  - fix token expire
-  - weekly planner - backend end todo
+  
 
   
 Extra:
@@ -42,3 +39,8 @@ Done task:
   - fix user session and jwt maybe (this time for real)
   - bookmark notes
   - bookmark shite - front end todo
+  - intergrate editor after setting css (done if not new panga )
+  - bookmark icon display check (aaaaaaaaaaaaaaaaa)
+  - read only test
+  - fix token expire
+  - weekly planner - backend end todo
