@@ -36,12 +36,9 @@ def login():
     cur = mysql.connection.cursor()
     cur.execute("CALL checkLogin(%s, %s)", (uname, pwd))
     user_id = cur.fetchone()
-    if user_id[0] != 0:
-        # session["user_id"] = user_id[0]
+    if user_id and user_id[0] != 0:
         access_token = create_access_token(identity=user_id[0])
-
-        # test = session["user_id"]
-        return jsonify({"access_token":access_token }), 200
+        return jsonify({"access_token": access_token}), 200
     else:
         return jsonify({"error": "Invalid credentials"}), 401
 

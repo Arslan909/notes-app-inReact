@@ -215,7 +215,7 @@ export default function WeeklyTask() {
 
             <DialogContentText
               sx={{
-                color: "#4daf51",
+                color: "white",
                 fontWeight: "900"
               }}
             >
@@ -265,19 +265,35 @@ export default function WeeklyTask() {
           </DialogContent>
         </div>
 
-        <div className="right-pane" style={{ flex: 1, padding: '20px',  }}>
+        <div className="right-pane" style={{ flex: 1, padding: '20px', color:"white" }}>
           <DialogContentText sx={{ color: "white", fontWeight: "900" }}>Weekly Report</DialogContentText>
           {weeklyReport.length !== 0 ?
             <BarChart
-              width={700}
+              width={650}
               height={400}
               series={[{ data: weeklyReport.map(item => item.percentage) }]}
-              xAxis={[{ data: weeklyReport.map(item => item.week), scaleType: 'band' }]}
+              xAxis={[
+                { 
+                  data: weeklyReport.map(item => item.week), 
+                  scaleType: 'band',
+                  colorMap: {
+                    type: 'ordinal',
+                    colors: weeklyReport.map(item => {
+                      if (item.percentage <= 30) {
+                        return 'red'; // Color red if percentage <= 30
+                      } else {
+                        return 'green'; // Color blue otherwise
+                      }
+                    })
+                  }
+                }
+              ]}
+
               yAxis={[{ valueFormatter: value =>` ${value}%` }]}
               // barLabel="value"
               margin={{
                 left: 40,
-                right: 30,
+                right: 10,
               }}
             />
             :

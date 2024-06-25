@@ -10,7 +10,6 @@ select * from Login;
 
 CREATE TABLE Notes(
 	ID INT PRIMARY KEY UNIQUE AUTO_INCREMENT,
-	noteId INT,
     userId INT,
     noteName VARCHAR(500),
     NoteDescription TEXT,
@@ -50,6 +49,14 @@ CREATE TABLE Task(
     status VARCHAR(45),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY(userId) REFERENCES Login(userId)
+);
+
+CREATE TABLE Bookmarks(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    userId INT,
+    noteId INT,
+    FOREIGN KEY(userId) REFERENCES Login(userId),
+    FOREIGN KEY (noteId) REFERENCES Notes(ID)
 );
 
  -- ---------------------------------------------------------------

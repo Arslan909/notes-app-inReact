@@ -94,21 +94,24 @@ export default function Sidebar(props) {
                             </li>
                         </div>
 
-                        <button
-                            className='note-del-btn'
-                            onClick={() => { createFolderNote(folder.folderId) }}>
-                            <i className='nf nf-cod-new_file delete-icon' ></i>
-                        </button>
+                        <div style={{display:"flex", gap:"1"}}>
 
-                        <RenameFolder 
-                            folderId={folder.folderId} 
-                            setRefreshNoteData={props.setRefreshNoteData}
-                        />
-                        <button
-                            className='note-del-btn'
-                            onClick={() => { deleteFolder(folder.folderId) }}>
-                            <i className='nf nf-md-delete_outline delete-icon' ></i>
-                        </button>
+                            <button
+                                className='note-del-btn'
+                                onClick={() => { createFolderNote(folder.folderId) }}>
+                                <i className='nf nf-cod-new_file delete-icon' ></i>
+                            </button>
+
+                            <RenameFolder
+                                folderId={folder.folderId}
+                                setRefreshNoteData={props.setRefreshNoteData}
+                            />
+                            <button
+                                className='note-del-btn'
+                                onClick={() => { deleteFolder(folder.folderId) }}>
+                                <i className='nf nf-md-delete_outline delete-icon' ></i>
+                            </button>
+                        </div>
 
                     </div>
 
@@ -277,7 +280,7 @@ export default function Sidebar(props) {
 
                     </button>
                     <button className='top-sidebar-btn' disabled={props.privilege === "read_only"} onClick={currentDateNote}>
-                    <i className="nf nf-md-file_plus_outline top-sidebar-options"  ></i>
+                        <i className="nf nf-md-file_plus_outline top-sidebar-options"  ></i>
 
 
                     </button>
@@ -355,8 +358,8 @@ Sidebar.propTypes = {
     search: PropTypes.bool,
     setNotes: PropTypes.func,
 
-    privilege:PropTypes.string,
-    setPrivilege:PropTypes.func
+    privilege: PropTypes.string,
+    setPrivilege: PropTypes.func
 
 
 

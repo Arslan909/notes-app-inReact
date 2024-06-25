@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, Link } from 'react-router-dom';
-import "./Css/login.css"
+import "./Css/login.css";
 
 export default function Login() {
     const [loginData, setLoginData] = React.useState({
@@ -8,23 +8,20 @@ export default function Login() {
         password: ""
     });
     const navigate = useNavigate();
-    const [errorMsg, setErrorMsg] = React.useState("")
-
+    const [errorMsg, setErrorMsg] = React.useState("");
 
     function handleSubmit(event) {
         event.preventDefault();
-        // console.log(loginData);
-        if(loginData.username === "" && loginData.password === "" ){
-            setErrorMsg("Email and password are not valid")
-            return 
-        }else if(loginData.username === ""){
-            setErrorMsg("Email is not valid")
-            return 
-        }else if(loginData.password === ""){
-            setErrorMsg("Password is not valid")
-            return
+        if (loginData.username === "" && loginData.password === "") {
+            setErrorMsg("Email and password are not valid");
+            return;
+        } else if (loginData.username === "") {
+            setErrorMsg("Email is not valid");
+            return;
+        } else if (loginData.password === "") {
+            setErrorMsg("Password is not valid");
+            return;
         }
-
 
         fetch("http://127.0.0.1:5000/login", {
             method: "POST",
@@ -40,28 +37,24 @@ export default function Login() {
                     setErrorMsg("Incorrect Email or Password");
                     throw new Error("Invalid credentials");
                 } else {
-                    throw new Error("server error");
+                    throw new Error("Server error");
                 }
             })
             .then(data => {
-                // console.log(data.userId);
-                // console.log(data.access_token);
-
-                // localStorage.setItem('userId', data.userId);
-                if(data.access_token !== "" ){
+                if (data.access_token) {
                     localStorage.setItem('access_token', data.access_token);
+                    navigate('/notes');
                 }
-                navigate('/notes');
-
             })
-
-
+            .catch(error => {
+                console.error("Error:", error);
+            });
     }
 
     function handleChange(event) {
-        setErrorMsg("")
+        setErrorMsg("");
         const { name, value } = event.target;
-        setLoginData((prevData) => ({
+        setLoginData(prevData => ({
             ...prevData,
             [name]: value
         }));
@@ -69,11 +62,10 @@ export default function Login() {
 
     return (
         <div className="login-container">
-
             <form className="login-form" onSubmit={handleSubmit}>
                 <img src="obsidian-logo.svg" alt="obsidian logo" />
                 <h1>Sign in to your account</h1>
-                {errorMsg !== "" ?  <h3 className="error-msg">{errorMsg}</h3> : null}
+                {errorMsg && <h3 className="error-msg">{errorMsg}</h3>}
                 <input
                     id="username"
                     type="text"
@@ -81,7 +73,6 @@ export default function Login() {
                     value={loginData.username}
                     onChange={handleChange}
                     placeholder="Enter username"
-                    // required
                     autoFocus
                 />
                 <p className="forgot-text">Forgot password?</p>
@@ -92,7 +83,6 @@ export default function Login() {
                     value={loginData.password}
                     onChange={handleChange}
                     placeholder="Enter password"
-                    // required
                 />
                 <button type="submit">Sign in</button>
                 <p className="create-account-text">Dont have an account? <span><Link to="/signup" className="sign-up-link">Create an account</Link></span></p>

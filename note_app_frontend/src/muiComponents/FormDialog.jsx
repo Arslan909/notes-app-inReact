@@ -105,8 +105,8 @@ export default function FormDialog() {
       >
         <DialogTitle>Invite</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Use email to invite other people to your workspace
+          <DialogContentText sx={{ color: "white" }}>
+            Send invitation to other users to share your workspace with them
           </DialogContentText>
           <TextField
             autoFocus
@@ -139,12 +139,17 @@ export default function FormDialog() {
             }}
           />
           <FormControl component="fieldset" margin="normal">
-            <FormLabel component="legend">Privilege</FormLabel>
+            <FormLabel component="legend"  sx={{ color: "white" }}>Privilege</FormLabel>
             <RadioGroup
               aria-label="privilege"
               name="privilege"
               value={privilege}
               onChange={handlePrivilegeChange}
+              sx={{
+                '& .MuiRadio-root.Mui-checked': {
+                  color: '#885af3',
+                },
+              }}
             >
               <FormControlLabel value="read_only" control={<Radio />} label="Read Only" />
               <FormControlLabel value="read_write" control={<Radio />} label="Read and Write" />
@@ -155,7 +160,7 @@ export default function FormDialog() {
               <ListItem key={index}>
                 <ListItemText primary={person.userEmail} />
                 <ListItemSecondaryAction>
-                  <Button variant="contained" color="primary" size="small" onClick={() => { handleInvite(person) }} >
+                  <Button variant="contained" color="primary" size="small" onClick={() => { handleInvite(person) }} sx={{ backgroundColor: "#885af3" }} >
                     <PersonAddIcon />
                   </Button>
                 </ListItemSecondaryAction>

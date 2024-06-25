@@ -121,7 +121,7 @@ export default function BasicPopover() {
           horizontal: 'left',
         }}
       >
-        {notifications.length > 0 ? notifications : <Typography sx={{ p: 2 }}>No notifications</Typography>}
+        {notifications.length > 0 ? notifications : <Typography sx={{ p: 2  }}>No notifications</Typography>}
       </Popover>
     </div>
   );

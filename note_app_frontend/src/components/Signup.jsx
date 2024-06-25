@@ -14,10 +14,14 @@ export default function Login() {
   function handleSubmit(event) {
     event.preventDefault();
     // console.log(loginData);
-    if (loginData.fullName === "") {
-      setErrorMsg("Name is not valid")
-      return
+
+    // full name validate
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(loginData.fullName)) {
+      setErrorMsg("Full Name only contain letters and spaces");
+      return;
     }
+    
     else if (loginData.username === "") {
       setErrorMsg("Email is not valid")
       return

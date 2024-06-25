@@ -38,7 +38,19 @@ export default function SearchNotes(props) {
         placeholder="Search Note title"
         fullWidth
         sx={{
-          color: "#9f9e9f"
+          color: "#9f9e9f",
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#9f9e9f', // Default border color
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#885af3', // Hover border color
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#885af3', // Focused border color
+          },
+          '& .MuiOutlinedInput-input': {
+            color: '#9f9e9f', // Text color
+          },
         }}
         value={searchQuery}
         // onChange={(e) => setSearchQuery(e.target.value)}
