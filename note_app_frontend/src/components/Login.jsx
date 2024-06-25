@@ -14,11 +14,13 @@ export default function Login() {
     function handleSubmit(event) {
         event.preventDefault();
         // console.log(loginData);
-        if(loginData.username === ""){
+        if(loginData.username === "" && loginData.password === "" ){
+            setErrorMsg("Email and password are not valid")
+            return 
+        }else if(loginData.username === ""){
             setErrorMsg("Email is not valid")
             return 
-        }
-        else if(loginData.password === ""){
+        }else if(loginData.password === ""){
             setErrorMsg("Password is not valid")
             return
         }
@@ -34,8 +36,11 @@ export default function Login() {
             .then(res => {
                 if (res.ok) {
                     return res.json();
+                } else if (res.status === 401) {
+                    setErrorMsg("Incorrect Email or Password");
+                    throw new Error("Invalid credentials");
                 } else {
-                    throw new Error('Invalid credentials');
+                    throw new Error("server error");
                 }
             })
             .then(data => {

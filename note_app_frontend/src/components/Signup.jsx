@@ -26,6 +26,10 @@ export default function Login() {
       setErrorMsg("Password is not valid")
       return
     }
+    else if (loginData.password.length < 6) {
+      setErrorMsg("Password length should be atleast 6 characters")
+      return
+    }
 
 
     fetch("http://127.0.0.1:5000/signup", {

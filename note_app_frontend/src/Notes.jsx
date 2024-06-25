@@ -29,6 +29,10 @@ export default function App() {
 
 	const [search, setSearch] = React.useState(false);
 
+	const [privilege, setPrivilege] = React.useState(null)
+
+
+
 	const navigate = useNavigate();
 
 	React.useEffect(() => {          // this will fetch all the notes present in the database 
@@ -60,7 +64,7 @@ export default function App() {
 
 				if (response.ok) {
 					const data = await response.json();
-					console.log(data);
+					// console.log(data);
           setBookmarkedNoteIds(data);
 				} else {
 					console.error('Failed to fetch bookmarked note IDs');
@@ -76,7 +80,7 @@ export default function App() {
 
 
 	}, [])
-	console.log(bookmarkedNoteIds);
+	// console.log(bookmarkedNoteIds);
 
 	React.useEffect(() => {          // this will fetch all the notes present in the database 
 		const token = localStorage.getItem("access_token")
@@ -134,7 +138,7 @@ export default function App() {
 				"Content-Type": "application/json"
 			}
 		})
-		navigate("/login")
+		navigate("/")
 	}
 
 
@@ -179,7 +183,9 @@ export default function App() {
 				</div>
 
 				<Tooltip title="bookmark" placement="right">
-					<BookmarkBorderOutlinedIcon onClick={() => handleBookmarkClick()} className="bookmark-icon" />
+					<BookmarkBorderOutlinedIcon 
+						onClick={privilege === "read_only" ? undefined  : handleBookmarkClick}
+						className="bookmark-icon" />
 				</Tooltip>
 
 				<Tooltip title="search" placement="right">
@@ -212,6 +218,8 @@ export default function App() {
 					search={search}
 					setNotes={setNotes}
 
+					setPrivilege={setPrivilege}
+					privilege={privilege}
 				/>
 
 				<Editor
@@ -219,6 +227,9 @@ export default function App() {
 					setSelectedNoteData={setSelectedNoteData}
 					setRefreshNoteData={setRefreshNoteData}
 					bookmarkedNoteIds={bookmarkedNoteIds}
+
+					setPrivilege={setPrivilege}
+					privilege={privilege}
 				/>
 
 			</Split>

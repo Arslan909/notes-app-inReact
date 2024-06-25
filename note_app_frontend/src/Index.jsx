@@ -10,7 +10,7 @@ import App from './Notes.jsx'
 
 
 export default function Index() {
-
+	// not really complete
 	return (
 		<>
 			<BrowserRouter>

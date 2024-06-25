@@ -33,7 +33,6 @@ def login():
     loginData = request.get_json()
     uname = loginData['username']
     pwd = loginData['password']
-
     cur = mysql.connection.cursor()
     cur.execute("CALL checkLogin(%s, %s)", (uname, pwd))
     user_id = cur.fetchone()
@@ -523,8 +522,8 @@ def updateNoteDescription():
         if "sharedId" in session:
             userId = session["sharedId"]
             noteId = data.get("noteId")
-            noteDescription = data.get("noteDescription")
-            noteTitle = data.get("noteTitle")
+            noteDescription = data.get("noteContent")
+            noteTitle = data.get("note_Title")
             
             if noteId is None or noteDescription is None:
                 return jsonify({"error": "Missing noteId or noteDescription in request"}), 400
@@ -542,10 +541,10 @@ def updateNoteDescription():
             noteDescription = data.get("noteContent")
             noteTitle = data.get("note_Title")
             
-            # print(userId)
-            # print(noteId)
-            # print(noteDescription)
-            # print(noteTitle)
+            print(userId)
+            print(noteId)
+            print(noteDescription)
+            print(noteTitle)
 
             if noteId is None or noteDescription is None:
                 return jsonify({"error": "Missing noteId or noteDescription in request"}), 400

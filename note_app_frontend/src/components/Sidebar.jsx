@@ -11,7 +11,7 @@ import RenameFolder from "../assets/RenameFolder"
 export default function Sidebar(props) {
     const [expandFolder, setExpandFolder] = React.useState([])
     const [sharedFetching, setSharedFetching] = React.useState(false)
-    const [privilege, setPrivilege] = React.useState(null)
+    // const [privilege, setPrivilege] = React.useState(null)
 
     const [sortType, setSortType] = React.useState(null)
     const token = localStorage.getItem("access_token")
@@ -271,12 +271,12 @@ export default function Sidebar(props) {
 
                 <div className="top-menu-sidebar">
                     {/* <h4>area at the top of side bar for no reason at all</h4> */}
-                    <button className='top-sidebar-btn' disabled={privilege === "read_only"} onClick={() => { props.setRefreshNoteData(prev => !prev) }}>
+                    <button className='top-sidebar-btn' onClick={() => { props.setRefreshNoteData(prev => !prev) }}>
                         <i className="nf nf-oct-file_directory top-sidebar-options" ></i>
 
 
                     </button>
-                    <button className='top-sidebar-btn' disabled={privilege === "read_only"} onClick={currentDateNote}>
+                    <button className='top-sidebar-btn' disabled={props.privilege === "read_only"} onClick={currentDateNote}>
                     <i className="nf nf-md-file_plus_outline top-sidebar-options"  ></i>
 
 
@@ -287,15 +287,15 @@ export default function Sidebar(props) {
                         ? <SearchNotes setNotes={props.setNotes} />
 
                         : <header className="side-bar-options">
-                            <button className='side-bar-options-btn' disabled={privilege === "read_only"} onClick={createNewNote}>
+                            <button className='side-bar-options-btn' disabled={props.privilege === "read_only"} onClick={createNewNote}>
                                 <i className="nf nf-md-file_plus_outline new-note-icon" ></i>
 
                             </button>
-                            <button className='side-bar-options-btn' onClick={() => { createFolder() }} disabled={privilege === "read_only"}>
+                            <button className='side-bar-options-btn' onClick={() => { createFolder() }} disabled={props.privilege === "read_only"}>
                                 <i className="nf nf-md-folder_multiple_plus_outline new-folder-icon"></i>
 
                             </button>
-                            <button className='side-bar-options-btn' disabled={privilege === "read_only"}>
+                            <button className='side-bar-options-btn' disabled={props.privilege === "read_only"}>
                                 {/* <i className="nf nf-md-sort new-folder-icon"></i> */}
                                 <SortNote setSortType={setSortType} />
 
@@ -315,10 +315,10 @@ export default function Sidebar(props) {
                 </div>
 
                 <div className="share-controls">
-                    {privilege != null
+                    {props.privilege != null
                         ?
                         <h3 className='privilige-alert'>
-                            {(privilege === "read_only") ? "read only" : "read and write"}
+                            {(props.privilege === "read_only") ? "read only" : "read and write"}
                         </h3>
 
                         :
@@ -328,7 +328,7 @@ export default function Sidebar(props) {
                     <Workspaces
                         setRefreshNoteData={props.setRefreshNoteData}
                         setSharedFetching={setSharedFetching}
-                        setPrivilege={setPrivilege}
+                        setPrivilege={props.setPrivilege}
                     />
                 </div>
 
@@ -354,6 +354,9 @@ Sidebar.propTypes = {
 
     search: PropTypes.bool,
     setNotes: PropTypes.func,
+
+    privilege:PropTypes.string,
+    setPrivilege:PropTypes.func
 
 
 

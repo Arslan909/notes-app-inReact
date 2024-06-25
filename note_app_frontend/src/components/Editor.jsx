@@ -18,9 +18,18 @@ export default function Editor(props) {
 	const [bookmarked, setBookmarked] = useState(false);
 	const mdxEditorRef = useRef(null);
 
+	
 	React.useEffect(()=>{
-		console.log(props.bookmarkedNoteIds);
-	},[])
+		if(props.selectedNoteData != null){
+
+			if(props.bookmarkedNoteIds.includes(props.selectedNoteData.noteId)){
+				setBookmarked(true)
+			}else{
+				setBookmarked(false)
+			}
+		}
+	},[props.bookmarkedNoteIds,props.selectedNoteData])
+
 	
 
 	if (tabs.length === 0) {
@@ -269,7 +278,7 @@ export default function Editor(props) {
 									</Tooltip>
 
 									<Tooltip title={bookmarked ? "Remove Bookmark" : "Add Bookmark"}>
-										<i className={bookmarked && props.bookmarkedNoteIds.includes(props.selectedNoteData.noteId) ? "nf nf-oct-bookmark_fill" : "nf nf-oct-bookmark"}
+										<i className={bookmarked ? "nf nf-oct-bookmark_fill" : "nf nf-oct-bookmark"}
 											onClick={() => { bookmarked ? removeBookmark(props.selectedNoteData.noteId) : addBookmark(props.selectedNoteData.noteId) }}>
 										</i>
 									</Tooltip>
@@ -289,6 +298,7 @@ export default function Editor(props) {
 								plugins={[headingsPlugin(), listsPlugin(), quotePlugin(), thematicBreakPlugin(), linkPlugin(), imagePlugin()]}
 								className="note-pad-textarea"
 								onChange={handleChange}
+								readOnly={props.privilege === "read_only"}
 							/>
 							:
 							<ReactMarkdown className="note-pad-viewarea" remarkPlugins={[remarkGfm]}>
@@ -312,4 +322,8 @@ Editor.propTypes = {
 	setSelectedNoteData: PropTypes.func,
 	setRefreshNoteData: PropTypes.func,
 	bookmarkedNoteIds: PropTypes.array,
+
+	privilege:PropTypes.string,
+  setPrivilege:PropTypes.func
 };
+
