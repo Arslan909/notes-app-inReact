@@ -15,7 +15,7 @@
     "@mdxeditor/editor": "^3.4.1",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
-    "@mui/x-charts": "^7.6.2",
+    "@mui/x-charts": "^7.23.2",
     "axios": "^1.6.8",
     "markdown-it": "^14.0.0",
     "marked": "^12.0.1",
